@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flotă SmartFleet | Parc Auto</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08101f;
+      --surface: rgba(15, 24, 44, 0.93);
+      --surface-soft: rgba(18, 30, 54, 0.88);
+      --text: #eef6ff;
+      --muted: #9bb4cf;
+      --accent: #00d1c4;
+      --accent-strong: #5e9cff;
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 24px 80px rgba(0,0,0,0.22);
+      font-family: Inter, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100%; background: radial-gradient(circle at top right, rgba(0,209,196,0.16), transparent 24%), radial-gradient(circle at bottom left, rgba(94,156,255,0.14), transparent 20%), linear-gradient(180deg, #07101f 0%, #091823 100%); color: var(--text); overflow-x: hidden; }
+    header { position: sticky; top: 0; z-index: 20; background: rgba(6, 14, 28, 0.92); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .page { width: min(1240px, calc(100% - 2rem)); margin: 0 auto; padding: 1.5rem 0 4rem; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; max-width: 1240px; margin: 0 auto; padding: 1rem 0; }
+    .brand { display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 700; letter-spacing: 0.08em; font-size: 1rem; text-transform: uppercase; }
+    .brand span { color: var(--accent); }
+    nav { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; transition: color 0.2s ease; }
+    nav a:hover, nav a.active { color: var(--text); }
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.4rem; border-radius: 999px; background: linear-gradient(135deg, #00d1c4, #5e9cff); color: #08101f; font-weight: 700; text-decoration: none; box-shadow: 0 18px 35px rgba(0,209,196,0.18); }
+    .hero { min-height: calc(100vh - 100px); display: grid; align-items: center; gap: 2rem; position: relative; padding-top: 2rem; }
+    .hero::before, .hero::after { content: ""; position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.45; }
+    .hero::before { width: 360px; height: 360px; top: -70px; left: -40px; background: rgba(0,209,196,0.24); }
+    .hero::after { width: 280px; height: 280px; bottom: -50px; right: -30px; background: rgba(94,156,255,0.24); }
+    .hero-copy h1 { font-size: clamp(2.8rem, 5vw, 4.5rem); line-height: 0.95; margin: 0; max-width: 12ch; }
+    .hero-copy p { color: var(--muted); max-width: 62ch; line-height: 1.9; margin: 1.5rem 0 2rem; font-size: 1rem; }
+    .cards-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card { padding: 1.8rem; border-radius: 1.7rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease; }
+    .card:hover { transform: translateY(-6px); border-color: rgba(0,209,196,0.36); background: rgba(0,209,196,0.07); }
+    .card h3 { margin: 0 0 0.85rem; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.8; }
+    .card .tag { display: inline-flex; margin-top: 1rem; color: var(--accent-strong); font-weight: 700; letter-spacing: 0.02em; font-size: 0.9rem; }
+    .table-panel { overflow-x: auto; border-radius: 1.7rem; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.05); }
+    table { width: 100%; border-collapse: collapse; color: var(--text); }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    th { color: #fff; font-weight: 700; }
+    tr:hover { background: rgba(255,255,255,0.03); }
+    .feature-panel { display: grid; gap: 1rem; padding: 2rem; border-radius: 2rem; background: var(--surface); border: 1px solid rgba(255,255,255,0.08); box-shadow: var(--shadow); }
+    .feature-panel h3 { margin: 0 0 0.8rem; }
+    .feature-panel p { color: var(--muted); line-height: 1.8; }
+    footer { margin-top: 4rem; padding: 2rem 0 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .hero-copy, .section-title, .table-panel, .feature-panel { animation: fadeInUp 0.9s ease both; }
+    .feature-panel { animation-delay: 0.14s; }
+    .btn-primary:hover, .card:hover { transform: translateY(-4px); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 1.6rem; align-items: start; }
+    .footer-grid p, .footer-grid a { color: var(--muted); font-size: 0.95rem; text-decoration: none; }
+    .footer-logo { font-weight: 700; letter-spacing: 0.06em; margin-bottom: 1rem; }
+    .footer-meta { margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+    @media(max-width: 980px) { .cards-grid, .footer-grid { grid-template-columns: 1fr; } }
+    @media(max-width: 640px) { .nav-inner { flex-direction: column; align-items: stretch; } nav { justify-content: center; } .hero-copy h1 { font-size: 2.6rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><span>Smart</span>Fleet</a>
+      <nav>
+        <a href="index.html">Acasă</a>
+        <a href="servicii.html">Servicii</a>
+        <a class="active" href="flota.html">Flotă</a>
+        <a href="avantaje.html">Avantaje</a>
+        <a href="noutati.html">Noutăți</a>
+        <a href="taskuri.html">Taskuri</a>
+      </nav>
+      <a class="btn-primary" href="mailto:office@smartfleet.ro">Cere ofertă</a>
+    </div>
+  </header>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="section-title"><span></span><span>Flotă completă</span></p>
+        <h1>Tipuri de vehicule și opțiuni flexibile pentru orice parc auto.</h1>
+        <p>Explorează gama noastră de mașini optimizate pentru fiecare nevoie operațională: autoturisme, autoutilitare și camioane, cu statut clar de disponibilitate.</p>
+        <img class="hero-image" src="https://images.unsplash.com/photo-1468402222174-307e2c5a94c8?auto=format&fit=crop&w=1200&q=80" alt="Flotă de mașini" />
+      </div>
+    </section>
+    <section>
+      <div class="section-title"><span></span><h2>Vehicule disponibile</h2></div>
+      <div class="table-panel">
+        <table>
+          <thead>
+            <tr><th>Marcă</th><th>Model</th><th>Categorie</th><th>Status</th><th>Preț/zi</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Toyota</td><td>Corolla</td><td>Economică</td><td>Disponibilă</td><td>320 RON</td></tr>
+            <tr><td>VW</td><td>Passat</td><td>Standard</td><td>Disponibilă</td><td>420 RON</td></tr>
+            <tr><td>BMW</td><td>X3</td><td>SUV</td><td>În mentenanță</td><td>590 RON</td></tr>
+            <tr><td>Mercedes</td><td>Vito</td><td>Autoutilitare</td><td>Disponibilă</td><td>610 RON</td></tr>
+            <tr><td>Volvo</td><td>FH</td><td>Camion</td><td>Disponibilă</td><td>1290 RON</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section>
+      <div class="section-title"><span></span><h2>Gestionare detaliată</h2></div>
+      <div class="feature-panel">
+        <img class="feature-image" src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=80" alt="Gestionare flotă" />
+        <h3>Segmentare după categorie</h3>
+        <p>Filtre complete pe categorie, statut și model pentru a găsi rapid vehiculul potrivit și a evita suprasarcina operațională.</p>
+      </div>
+    </section>
+    <section>
+      <div class="section-title"><span></span><h2>Research Autovit</h2></div>
+      <div class="feature-panel">
+        <h3>Ce învață piața de la Autovit</h3>
+        <p>Autovit afișează acumtrând cel mai căutat segment de autoturisme, dar și autoutilitare și camioane, confirmând interesul puternic pentru mobilitate profesională.</p>
+        <p>Secțiunile populare de pe Autovit includ modele Volkswagen, Audi, Mercedes și BMW, dar și vehicule de lucru precum furgonete și camioane, ceea ce susține ideea unei flote mixte.</p>
+        <p>Localitățile principale pentru anunțuri sunt București, Cluj, Timișoara, Brașov și Pitești, ceea ce indică necesitatea unei gestiuni regionale ușoare și a unei disponibilități locale bune.</p>
+      </div>
+    </section>
+    <footer>
+      <div class="footer-grid">
+        <div><div class="footer-logo">SmartFleet</div><p>Soluții de management auto pentru firme moderne. Simplu, sigur și transparent.</p><p class="footer-meta">© 2026 SmartFleet — Toate drepturile rezervate</p></div>
+        <div><h3>Contact</h3><p>București, România</p><p>office@smartfleet.ro</p><p>+40 745 123 456</p></div>
+        <div><h3>Linkuri utile</h3><a href="index.html">Acasă</a><br /><a href="servicii.html">Servicii</a><br /><a href="avantaje.html">Avantaje</a><br /><a href="noutati.html">Noutăți</a></div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

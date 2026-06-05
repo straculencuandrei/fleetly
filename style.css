@@ -837,3 +837,28 @@ body {
         padding: 12px 16px;
     }
 }
+
+/* Roluri: Client vs Admin */
+body.role-client .doar-admin {
+    display: none !important;
+}
+
+body.role-client .responsive-table th:last-child,
+body.role-client .responsive-table td:last-child {
+    display: none !important;
+}
+
+/* Elemente specifice clienților */
+.doar-client {
+    display: none !important;
+}
+
+body.role-client .doar-client {
+    display: block !important;
+}
+
+body.role-client button.doar-client,
+body.role-client a.doar-client {
+    display: inline-flex !important;
+}
+

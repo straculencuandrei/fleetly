@@ -34,7 +34,7 @@
                     <i class="fa-solid fa-car"></i>
                     <span>Gestiune Mașini</span>
                 </a>
-                <a href="#drivers" class="nav-item" data-tab="drivers">
+                <a href="#drivers" class="nav-item doar-admin" data-tab="drivers">
                     <i class="fa-solid fa-users"></i>
                     <span>Gestiune Șoferi</span>
                 </a>
@@ -61,6 +61,9 @@
                     <span>Proiect de Grup</span>
                     <strong>Management Parc Auto</strong>
                 </div>
+                <button class="btn btn-danger" onclick="logout()" style="width: 100%; justify-content: center; margin-top: 12px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Deconectare
+                </button>
             </div>
         </aside>
 
@@ -74,11 +77,17 @@
                         <h2>Privire de Ansamblu</h2>
                         <p>Statistici generale și alerte active pentru parcul auto.</p>
                     </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-secondary" onclick="resetDatabase()">
+                            <i class="fa-solid fa-rotate-left"></i> Reinițializează Datele Demo
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Carduri Statistici -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <!-- Carduri Admin -->
+                    <div class="stat-card doar-admin">
                         <div class="stat-icon blue">
                             <i class="fa-solid fa-car"></i>
                         </div>
@@ -87,7 +96,7 @@
                             <span class="stat-value" id="stat-total-cars">0</span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card doar-admin">
                         <div class="stat-icon emerald">
                             <i class="fa-solid fa-users"></i>
                         </div>
@@ -96,7 +105,7 @@
                             <span class="stat-value" id="stat-total-drivers">0</span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card doar-admin">
                         <div class="stat-icon rose">
                             <i class="fa-solid fa-wrench"></i>
                         </div>
@@ -105,13 +114,51 @@
                             <span class="stat-value" id="stat-cars-service">0</span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card doar-admin">
                         <div class="stat-icon amber">
                             <i class="fa-solid fa-wallet"></i>
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Costuri Service (Lei)</span>
                             <span class="stat-value" id="stat-total-cost">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Carduri Client -->
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Status Mașină</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-car-status">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon emerald">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Valabilitate Permis</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-license-days">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon rose">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Poliță RCA</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-rca-status">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon amber">
+                            <i class="fa-solid fa-road"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Vinietă</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-vignette-status">N/A</span>
                         </div>
                     </div>
                 </div>
@@ -149,7 +196,7 @@
                         <h2>Gestiune Mașini</h2>
                         <p>Adăugați, editați sau eliminați vehiculele din parcul auto.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-car')">
                             <i class="fa-solid fa-plus"></i> Adaugă Mașină
                         </button>
@@ -189,13 +236,13 @@
             </section>
 
             <!-- SECȚIUNE: GESTIUNE ȘOFERI -->
-            <section id="drivers" class="tab-content">
+            <section id="drivers" class="tab-content doar-admin">
                 <div class="content-header">
                     <div class="header-title">
                         <h2>Gestiune Șoferi</h2>
                         <p>Evidența conducătorilor auto și a mașinilor alocate.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-driver')">
                             <i class="fa-solid fa-plus"></i> Adaugă Șofer
                         </button>
@@ -235,9 +282,14 @@
                         <h2>Management Service</h2>
                         <p>Urmăriți reviziile, reparațiile și costurile de întreținere.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-service')">
                             <i class="fa-solid fa-plus"></i> Înregistrează Service
+                        </button>
+                    </div>
+                    <div class="header-actions doar-client">
+                        <button class="btn btn-danger" onclick="openModal('modal-report-issue')">
+                            <i class="fa-solid fa-circle-exclamation"></i> Raportează o Defecțiune
                         </button>
                     </div>
                 </div>
@@ -275,7 +327,7 @@
                         <h2>Evidență Asigurări</h2>
                         <p>Monitorizați valabilitatea polițelor RCA și CASCO pentru tot parcul auto.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-insurance')">
                             <i class="fa-solid fa-plus"></i> Adaugă Poliță RCA/CASCO
                         </button>
@@ -310,7 +362,7 @@
                         <h2>Gestiune Viniete de Drum</h2>
                         <p>Asigurați-vă că vehiculele au taxele de drum achitate la zi.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-vignette')">
                             <i class="fa-solid fa-plus"></i> Adaugă Vinietă
                         </button>
@@ -345,7 +397,7 @@
                         <h2>Management Anvelope</h2>
                         <p>Monitorizați seturile de anvelope, starea de uzură și locația lor.</p>
                     </div>
-                    <div class="header-actions">
+                    <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-tires')">
                             <i class="fa-solid fa-plus"></i> Adaugă Anvelope
                         </button>
@@ -518,6 +570,32 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('modal-service')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Înregistrează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: RAPORTEAZĂ DEFECȚIUNE (CLIENT) -->
+    <div id="modal-report-issue" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Raportează o Defecțiune</h3>
+                <button class="modal-close" onclick="closeModal('modal-report-issue')">&times;</button>
+            </div>
+            <form id="form-report-issue" onsubmit="reportIssue(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="report-date">Dată Sesizare</label>
+                        <input type="date" id="report-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="report-desc">Descrierea Defecțiunii</label>
+                        <textarea id="report-desc" class="form-control" rows="4" placeholder="Vă rugăm să detaliați defecțiunea observată (ex: zgomot la frânare, martor motor aprins)..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-report-issue')">Anulează</button>
+                    <button type="submit" class="btn btn-danger">Trimite Sesizarea</button>
                 </div>
             </form>
         </div>

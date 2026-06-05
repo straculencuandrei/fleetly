@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetly - Autentificare</title>
+    <style>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #0b111e; 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            color: white;
+        }
+        .login-box { 
+            background: #151f32; 
+            padding: 40px; 
+            border-radius: 12px; 
+            width: 320px; 
+            text-align: center; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+            border: 1px solid #1f2d47;
+        }
+        .login-box h2 { 
+            margin-top: 0;
+            margin-bottom: 25px; 
+            color: #38bdf8; 
+            font-size: 26px;
+            font-weight: 600;
+        }
+        .login-box input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            box-sizing: border-box; 
+            background: #1f2d47; 
+            border: 1px solid #314363; 
+            color: white; 
+            border-radius: 6px; 
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .login-box button { 
+            width: 100%; 
+            padding: 14px; 
+            background: #0284c7; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            margin-top: 15px; 
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .login-box button:hover { 
+            background: #0369a1; 
+        }
+        #mesajEroare {
+            color: #ef4444; 
+            display: none; 
+            margin-top: 15px;
+            font-size: 14px;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Fleetly Login</h2>
+        <form id="formLogin">
+            <input type="text" id="user" placeholder="Utilizator (admin sau client)" required autocomplete="off">
+            <input type="password" id="pass" placeholder="Parolă" required>
+            <button type="submit">Conectare</button>
+        </form>
+        <p id="mesajEroare">Utilizator sau parolă incorectă!</p>
+    </div>
+
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userIntrodus = document.getElementById('user').value.trim();
+            const parolaIntrodusa = document.getElementById('pass').value;
+
+            // Definim utilizatorii direct în script pentru a ocoli erorile de import
+            const utilizatoriPredefiniti = [
+                { username: "admin", parola: "admin123", rol: "admin" },
+                { username: "andrei", parola: "client123", rol: "client", driverId: "d1" },
+                { username: "mihai", parola: "client123", rol: "client", driverId: "d2" },
+                { username: "elena", parola: "client123", rol: "client", driverId: "d3" },
+                { username: "alexandru", parola: "client123", rol: "client", driverId: "d4" }
+            ];
+
+            // Dacă baza de date cu utilizatori nu există deloc sau nu conține noile conturi, o scriem/actualizăm acum
+            const localUsers = localStorage.getItem("fleet_users");
+            if (!localUsers || !localUsers.includes("andrei")) {
+                localStorage.setItem("fleet_users", JSON.stringify(utilizatoriPredefiniti));
+            }
+
+            // Preluăm utilizatorii din localStorage
+            const bazeDateUtilizatori = JSON.parse(localStorage.getItem("fleet_users"));
+            
+            // Căutăm potrivirea
+            const contGasit = bazeDateUtilizatori.find(u => u.username === userIntrodus && u.parola === parolaIntrodusa);
+
+            if (contGasit) {
+                // Dacă ne logăm de pe o sesiune coruptă/goală unde datele erau 0, curățăm restul tabelelor ca să forțăm app.js să le re-populeze curat
+                if (!localStorage.getItem("fleet_cars") || localStorage.getItem("fleet_cars") === "[]") {
+                    localStorage.removeItem("fleet_cars");
+                    localStorage.removeItem("fleet_drivers");
+                    localStorage.removeItem("fleet_service");
+                    localStorage.removeItem("fleet_insurances");
+                    localStorage.removeItem("fleet_vignettes");
+                    localStorage.removeItem("fleet_tires");
+                }
+
+                // Salvăm starea sesiunii
+                localStorage.setItem('statusLogat', 'da');
+                localStorage.setItem('rolUtilizator', contGasit.rol);
+                if (contGasit.driverId) {
+                    localStorage.setItem('driverIdUtilizator', contGasit.driverId);
+                } else {
+                    localStorage.removeItem('driverIdUtilizator');
+                }
+                
+                // Trimitem utilizatorul direct în Dashboard
+                window.location.href = 'index.html';
+            } else {
+                // Afișăm eroarea în caz de credențiale greșite
+                document.getElementById('mesajEroare').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

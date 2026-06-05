@@ -1,4 +1,11 @@
 // Date mock inițiale pentru a popula aplicația la prima rulare
+const initialUsers = [
+    { username: "admin", parola: "admin123", rol: "admin" },
+    { username: "andrei", parola: "client123", rol: "client", driverId: "d1" },
+    { username: "mihai", parola: "client123", rol: "client", driverId: "d2" },
+    { username: "elena", parola: "client123", rol: "client", driverId: "d3" },
+    { username: "alexandru", parola: "client123", rol: "client", driverId: "d4" }
+];
 const initialCars = [
     { id: "c1", plateNumber: "B 123 ABC", brand: "Dacia", model: "Logan", fuelType: "Benzină/GPL", year: 2021, status: "Activ" },
     { id: "c2", plateNumber: "CJ 77 WXY", brand: "Skoda", model: "Octavia", fuelType: "Motorină", year: 2019, status: "Activ" },
@@ -60,6 +67,9 @@ function initializeStorage() {
     }
     if (!localStorage.getItem("fleet_tires")) {
         localStorage.setItem("fleet_tires", JSON.stringify(initialTires));
+    }
+    if (!localStorage.getItem("fleet_users")) {
+        localStorage.setItem("fleet_users", JSON.stringify(initialUsers));
     }
 }
 

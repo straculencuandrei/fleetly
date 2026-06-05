@@ -1,5 +1,12 @@
 // app.js - Logica Aplicației Management Parc Auto (Fleetly)
+// Verificare autentificare (simplă, bazată pe localStorage)
+const statusLogat = localStorage.getItem('statusLogat');
+const rolUtilizator = localStorage.getItem('rolUtilizator');
+const driverIdUtilizator = localStorage.getItem('driverIdUtilizator');
 
+if (statusLogat !== 'da') {
+    window.location.href = 'login.html';
+}
 // Rulăm funcțiile când documentul s-a încărcat complet
 document.addEventListener("DOMContentLoaded", () => {
     initApp();
@@ -14,6 +21,15 @@ let state = {
     vignettes: JSON.parse(localStorage.getItem("fleet_vignettes")) || [],
     tires: JSON.parse(localStorage.getItem("fleet_tires")) || []
 };
+
+// Identificăm mașina alocată clientului dacă e logat ca și client
+let clientCarId = null;
+if (rolUtilizator === 'client' && driverIdUtilizator) {
+    const activeDriver = state.drivers.find(d => d.id === driverIdUtilizator);
+    if (activeDriver) {
+        clientCarId = activeDriver.assignedCarId;
+    }
+}
 
 // Salvare stare în localStorage
 function saveState() {
@@ -106,24 +122,89 @@ function checkExpiryStatus(expiryDateString) {
 // 2. DASHBOARD - STATISTICI ȘI ALERTE
 // ----------------------------------------------------
 function updateDashboard() {
-    // Calcul cifre de bază
-    document.getElementById("stat-total-cars").textContent = state.cars.length;
-    document.getElementById("stat-total-drivers").textContent = state.drivers.length;
-    
-    const serviceCars = state.cars.filter(c => c.status === "În Service").length;
-    document.getElementById("stat-cars-service").textContent = serviceCars;
-    
-    // Calcul costuri totale service
-    const totalServiceCost = state.service.reduce((sum, item) => sum + Number(item.cost || 0), 0);
-    document.getElementById("stat-total-cost").textContent = totalServiceCost.toLocaleString("ro-RO");
+    // Dacă utilizatorul curent este client, calculăm statisticile specifice clientului
+    if (rolUtilizator === 'client') {
+        const clientCar = state.cars.find(c => c.id === clientCarId);
+        const clientDriver = state.drivers.find(d => d.id === driverIdUtilizator);
+        
+        // 1. Status Mașină
+        const statusEl = document.getElementById("stat-client-car-status");
+        if (statusEl) {
+            statusEl.textContent = clientCar ? clientCar.status : "Nealocată";
+            statusEl.className = "stat-value";
+            if (clientCar) {
+                if (clientCar.status === "Activ") statusEl.style.color = "var(--accent-emerald)";
+                else if (clientCar.status === "În Service") statusEl.style.color = "var(--accent-amber)";
+                else statusEl.style.color = "var(--accent-rose)";
+            }
+        }
+        
+        // 2. Valabilitate Permis proprie
+        const licenseEl = document.getElementById("stat-client-license-days");
+        if (licenseEl && clientDriver) {
+            const status = checkExpiryStatus(clientDriver.licenseExpiry);
+            licenseEl.textContent = status.label;
+            licenseEl.className = "stat-value";
+            if (status.daysLeft < 0) licenseEl.style.color = "var(--accent-rose)";
+            else if (status.daysLeft <= 30) licenseEl.style.color = "var(--accent-amber)";
+            else licenseEl.style.color = "var(--accent-emerald)";
+        } else if (licenseEl) {
+            licenseEl.textContent = "N/A";
+        }
+        
+        // 3. RCA mașină proprie
+        const rcaEl = document.getElementById("stat-client-rca-status");
+        if (rcaEl) {
+            const rca = state.insurances.find(i => i.carId === clientCarId && i.type === "RCA");
+            if (rca) {
+                const status = checkExpiryStatus(rca.expiryDate);
+                rcaEl.textContent = status.label;
+                rcaEl.className = "stat-value";
+                if (status.daysLeft < 0) rcaEl.style.color = "var(--accent-rose)";
+                else if (status.daysLeft <= 30) rcaEl.style.color = "var(--accent-amber)";
+                else rcaEl.style.color = "var(--accent-emerald)";
+            } else {
+                rcaEl.textContent = "Lipsă RCA";
+                rcaEl.style.color = "var(--accent-rose)";
+            }
+        }
+        
+        // 4. Vinietă mașină proprie
+        const vigEl = document.getElementById("stat-client-vignette-status");
+        if (vigEl) {
+            const vig = state.vignettes.find(v => v.carId === clientCarId && v.country === "România");
+            if (vig) {
+                const status = checkExpiryStatus(vig.expiryDate);
+                vigEl.textContent = status.label;
+                vigEl.className = "stat-value";
+                if (status.daysLeft < 0) vigEl.style.color = "var(--accent-rose)";
+                else if (status.daysLeft <= 30) vigEl.style.color = "var(--accent-amber)";
+                else vigEl.style.color = "var(--accent-emerald)";
+            } else {
+                vigEl.textContent = "Lipsă Vinietă";
+                vigEl.style.color = "var(--accent-rose)";
+            }
+        }
+    } else {
+        // Cifre admin existente
+        document.getElementById("stat-total-cars").textContent = state.cars.length;
+        document.getElementById("stat-total-drivers").textContent = state.drivers.length;
+        
+        const serviceCars = state.cars.filter(c => c.status === "În Service").length;
+        document.getElementById("stat-cars-service").textContent = serviceCars;
+        
+        const totalServiceCost = state.service.reduce((sum, item) => sum + Number(item.cost || 0), 0);
+        document.getElementById("stat-total-cost").textContent = totalServiceCost.toLocaleString("ro-RO");
+    }
 
-    // ALERTE (Asigurări, Viniete, Permise Șoferi)
+    // ALERTE (Asigurări, Viniete, Permise Șoferi) - filtrate după caz
     const alertsListContainer = document.getElementById("dashboard-alerts");
     alertsListContainer.innerHTML = "";
     let alertCount = 0;
 
     // A. Alerte Asigurări
     state.insurances.forEach(ins => {
+        if (rolUtilizator === 'client' && ins.carId !== clientCarId) return;
         const car = state.cars.find(c => c.id === ins.carId);
         const plate = car ? car.plateNumber : "Mașină necunoscută";
         const status = checkExpiryStatus(ins.expiryDate);
@@ -148,6 +229,7 @@ function updateDashboard() {
 
     // B. Alerte Viniete
     state.vignettes.forEach(vig => {
+        if (rolUtilizator === 'client' && vig.carId !== clientCarId) return;
         const car = state.cars.find(c => c.id === vig.carId);
         const plate = car ? car.plateNumber : "Mașină necunoscută";
         const status = checkExpiryStatus(vig.expiryDate);
@@ -172,6 +254,7 @@ function updateDashboard() {
 
     // C. Alerte Permise Șoferi
     state.drivers.forEach(driver => {
+        if (rolUtilizator === 'client' && driver.id !== driverIdUtilizator) return;
         const status = checkExpiryStatus(driver.licenseExpiry);
         if (status.daysLeft <= 30) {
             alertCount++;
@@ -206,7 +289,11 @@ function updateDashboard() {
     const activityContainer = document.getElementById("dashboard-activity");
     activityContainer.innerHTML = "";
     
-    const activeServices = state.service.filter(s => s.status === "În curs");
+    const activeServices = state.service.filter(s => {
+        const matchesStatus = s.status === "În curs";
+        const matchesCar = rolUtilizator !== 'client' || s.carId === clientCarId;
+        return matchesStatus && matchesCar;
+    });
     
     if (activeServices.length > 0) {
         activeServices.forEach(ser => {
@@ -278,6 +365,9 @@ function populateCarsTable() {
     const statusFilter = document.getElementById("filter-car-status").value;
 
     const filteredCars = state.cars.filter(car => {
+        if (rolUtilizator === 'client' && car.id !== clientCarId) {
+            return false;
+        }
         const matchesSearch = car.plateNumber.toLowerCase().includes(searchQuery) ||
                               car.brand.toLowerCase().includes(searchQuery) ||
                               car.model.toLowerCase().includes(searchQuery);
@@ -359,6 +449,9 @@ function populateServiceTable() {
     const searchQuery = document.getElementById("search-service").value.toLowerCase();
 
     const filteredServices = state.service.filter(s => {
+        if (rolUtilizator === 'client' && s.carId !== clientCarId) {
+            return false;
+        }
         const car = state.cars.find(c => c.id === s.carId);
         const plate = car ? car.plateNumber.toLowerCase() : "";
         return plate.includes(searchQuery) || s.description.toLowerCase().includes(searchQuery);
@@ -396,12 +489,16 @@ function populateInsurancesTable() {
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    if (state.insurances.length === 0) {
+    const filteredInsurances = state.insurances.filter(ins => {
+        return rolUtilizator !== 'client' || ins.carId === clientCarId;
+    });
+
+    if (filteredInsurances.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Nicio asigurare configurată.</td></tr>`;
         return;
     }
 
-    state.insurances.forEach(ins => {
+    filteredInsurances.forEach(ins => {
         const car = state.cars.find(c => c.id === ins.carId);
         const plateText = car ? `<strong>${car.plateNumber}</strong>` : `<span style="color: var(--text-rose)">Ștearsă</span>`;
         const status = checkExpiryStatus(ins.expiryDate);
@@ -430,12 +527,16 @@ function populateVignettesTable() {
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    if (state.vignettes.length === 0) {
+    const filteredVignettes = state.vignettes.filter(vig => {
+        return rolUtilizator !== 'client' || vig.carId === clientCarId;
+    });
+
+    if (filteredVignettes.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Nicio vinietă achiziționată.</td></tr>`;
         return;
     }
 
-    state.vignettes.forEach(vig => {
+    filteredVignettes.forEach(vig => {
         const car = state.cars.find(c => c.id === vig.carId);
         const plateText = car ? `<strong>${car.plateNumber}</strong>` : `<span style="color: var(--text-rose)">Ștearsă</span>`;
         const status = checkExpiryStatus(vig.expiryDate);
@@ -464,12 +565,16 @@ function populateTiresTable() {
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    if (state.tires.length === 0) {
+    const filteredTires = state.tires.filter(set => {
+        return rolUtilizator !== 'client' || set.carId === clientCarId;
+    });
+
+    if (filteredTires.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Nicio anvelopă înregistrată.</td></tr>`;
         return;
     }
 
-    state.tires.forEach(set => {
+    filteredTires.forEach(set => {
         const car = state.cars.find(c => c.id === set.carId);
         const plateText = car ? `<strong>${car.plateNumber}</strong>` : `<span style="color: var(--text-rose)">Ștearsă</span>`;
         
@@ -880,3 +985,104 @@ function deleteTires(id) {
         saveState();
     }
 }
+
+// ----------------------------------------------------
+// 6. LOGOUT ȘI REINIȚIALIZARE DATE (ADMIN)
+// ----------------------------------------------------
+function logout() {
+    localStorage.removeItem('statusLogat');
+    localStorage.removeItem('rolUtilizator');
+    localStorage.removeItem('driverIdUtilizator');
+    window.location.href = 'login.html';
+}
+
+function resetDatabase() {
+    if (confirm("Sigur doriți să resetați baza de date la valorile demo inițiale? Toate modificările curente vor fi pierdute.")) {
+        localStorage.removeItem("fleet_cars");
+        localStorage.removeItem("fleet_drivers");
+        localStorage.removeItem("fleet_service");
+        localStorage.removeItem("fleet_insurances");
+        localStorage.removeItem("fleet_vignettes");
+        localStorage.removeItem("fleet_tires");
+        
+        // Apelăm funcția de inițializare din mockData.js
+        if (typeof initializeStorage === "function") {
+            initializeStorage();
+        }
+        
+        window.location.reload();
+    }
+}
+
+// ----------------------------------------------------
+// 7. RAPORTARE DEFECȚIUNE (CLIENT)
+// ----------------------------------------------------
+function reportIssue(e) {
+    e.preventDefault();
+    const date = document.getElementById("report-date").value;
+    const desc = document.getElementById("report-desc").value.trim();
+
+    if (!clientCarId) {
+        alert("Nu aveți nicio mașină alocată pentru a putea raporta o defecțiune.");
+        return;
+    }
+
+    // Adăugăm sesizarea de service cu cost 0 și status "În curs"
+    state.service.push({
+        id: generateId(),
+        carId: clientCarId,
+        date: date,
+        description: "[Sesizare Client] " + desc,
+        cost: 0,
+        status: "În curs"
+    });
+
+    // Punem mașina în service
+    const car = state.cars.find(c => c.id === clientCarId);
+    if (car) {
+        car.status = "În Service";
+    }
+
+    saveState();
+    closeModal("modal-report-issue");
+    
+    // Resetăm input-urile din formular
+    document.getElementById("form-report-issue").reset();
+    
+    alert("Defecțiunea a fost raportată cu succes! Mașina a fost plasată 'În Service'.");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Adăugăm clasa corespunzătoare rolului pe body
+    document.body.classList.add(rolUtilizator === 'admin' ? 'role-admin' : 'role-client');
+
+    if (rolUtilizator === 'client') {
+        // Schimbăm titlul paginii pentru client portal
+        const titlu = document.querySelector('.logo-text h1');
+        if (titlu) {
+            titlu.innerText = "Fleetly Portal";
+        }
+        
+        // Redenumim dinamic meniurile din sidebar pentru utilizatorii client
+        const carsLink = document.querySelector('[data-tab="cars"] span');
+        if (carsLink) carsLink.textContent = "Mașina Mea";
+        
+        const serviceLink = document.querySelector('[data-tab="service"] span');
+        if (serviceLink) serviceLink.textContent = "Istoric & Sesizări";
+
+        // Ascundem opțiunile din dropdown din modale care nu corespund mașinii clientului
+        // (astfel încât la adăugare anvelope/service clientul să aibă doar mașina sa preselectată)
+        const carDropdowns = ["service-car", "insurance-car", "vignette-car", "tires-car"];
+        carDropdowns.forEach(dropdownId => {
+            const select = document.getElementById(dropdownId);
+            if (select) {
+                // Lăsăm doar opțiunea corespunzătoare mașinii sale
+                for (let i = select.options.length - 1; i >= 0; i--) {
+                    if (select.options[i].value !== "" && select.options[i].value !== clientCarId) {
+                        select.remove(i);
+                    }
+                }
+            }
+        });
+    }
+});

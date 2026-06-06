@@ -234,69 +234,72 @@
         // Funcții pentru Demo Panel (se activează doar pe localhost / 127.0.0.1)
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
+        if (isLocalhost) {
+            // Generăm structura HTML dinamic pentru a nu fi expusă deloc în producție
+            const demoPanelHtml = `
+                <div id="demoPanel" class="demo-panel">
+                    <button class="demo-panel-close" onclick="toggleDemoPanel(false)">&times;</button>
+                    <h3>Conturi Demo (Local)</h3>
+                    <div class="demo-accounts-list">
+                        <div class="demo-account-card" onclick="selectDemoAccount('admin', 'admin123')">
+                            <div class="demo-account-role">Administrator</div>
+                            <div class="demo-account-user">admin</div>
+                            <div class="demo-account-pass">Parolă: admin123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('andrei', 'client123')">
+                            <div class="demo-account-role client">Client (Andrei)</div>
+                            <div class="demo-account-user">andrei</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('mihai', 'client123')">
+                            <div class="demo-account-role client">Client (Mihai)</div>
+                            <div class="demo-account-user">mihai</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('elena', 'client123')">
+                            <div class="demo-account-role client">Client (Elena)</div>
+                            <div class="demo-account-user">elena</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('alexandru', 'client123')">
+                            <div class="demo-account-role client">Client (Alexandru)</div>
+                            <div class="demo-account-user">alexandru</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', demoPanelHtml);
+
+            // Înregistrează evenimentul tastaturii
+            window.addEventListener('keydown', function(e) {
+                // Comanda Ctrl + Alt + 5
+                if (e.ctrlKey && e.altKey && e.key === '5') {
+                    e.preventDefault();
+                    toggleDemoPanel();
+                }
+            });
+        }
+
         function toggleDemoPanel(show) {
             if (!isLocalhost) return;
             const panel = document.getElementById('demoPanel');
             if (panel) {
-                if (show) {
-                    panel.classList.add('active');
+                if (show !== undefined) {
+                    if (show) panel.classList.add('active');
+                    else panel.classList.remove('active');
                 } else {
-                    panel.classList.remove('active');
+                    panel.classList.toggle('active');
                 }
             }
         }
 
         function selectDemoAccount(username, password) {
+            if (!isLocalhost) return;
             document.getElementById('user').value = username;
             document.getElementById('pass').value = password;
             toggleDemoPanel(false);
         }
-
-        if (isLocalhost) {
-            window.addEventListener('keydown', function(e) {
-                // Comanda Ctrl + Alt + 5
-                if (e.ctrlKey && e.altKey && e.key === '5') {
-                    e.preventDefault();
-                    const panel = document.getElementById('demoPanel');
-                    if (panel) {
-                        panel.classList.toggle('active');
-                    }
-                }
-            });
-        }
     </script>
-
-    <!-- Side Panel secret pentru conturi Demo -->
-    <div id="demoPanel" class="demo-panel">
-        <button class="demo-panel-close" onclick="toggleDemoPanel(false)">&times;</button>
-        <h3>Conturi Demo (Local)</h3>
-        <div class="demo-accounts-list">
-            <div class="demo-account-card" onclick="selectDemoAccount('admin', 'admin123')">
-                <div class="demo-account-role">Administrator</div>
-                <div class="demo-account-user">admin</div>
-                <div class="demo-account-pass">Parolă: admin123</div>
-            </div>
-            <div class="demo-account-card" onclick="selectDemoAccount('andrei', 'client123')">
-                <div class="demo-account-role client">Client (Andrei)</div>
-                <div class="demo-account-user">andrei</div>
-                <div class="demo-account-pass">Parolă: client123</div>
-            </div>
-            <div class="demo-account-card" onclick="selectDemoAccount('mihai', 'client123')">
-                <div class="demo-account-role client">Client (Mihai)</div>
-                <div class="demo-account-user">mihai</div>
-                <div class="demo-account-pass">Parolă: client123</div>
-            </div>
-            <div class="demo-account-card" onclick="selectDemoAccount('elena', 'client123')">
-                <div class="demo-account-role client">Client (Elena)</div>
-                <div class="demo-account-user">elena</div>
-                <div class="demo-account-pass">Parolă: client123</div>
-            </div>
-            <div class="demo-account-card" onclick="selectDemoAccount('alexandru', 'client123')">
-                <div class="demo-account-role client">Client (Alexandru)</div>
-                <div class="demo-account-user">alexandru</div>
-                <div class="demo-account-pass">Parolă: client123</div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

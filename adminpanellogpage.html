@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Route Guard: Verifică autentificarea instantaneu înainte ca restul DOM-ului să fie încărcat
+        if (localStorage.getItem('statusLogat') !== 'da') {
+            window.location.replace('login.html');
+        } else {
+            const rol = localStorage.getItem('rolUtilizator');
+            if (rol === 'client') {
+                window.location.replace('clientpanel.html');
+            }
+        }
+    </script>
     <title>Fleetly - Management Parc Auto</title>
     
     <!-- Link FontAwesome pentru pictograme premium -->

@@ -1,18 +1,11 @@
 // app.js - Logica Aplicației Management Parc Auto (Fleetly)
-// Verificare autentificare (simplă, bazată pe localStorage)
+// Verificare autentificare secundară (fallback dacă guard-ul din <head> a fost ocolit)
 const statusLogat = localStorage.getItem('statusLogat');
 const rolUtilizator = localStorage.getItem('rolUtilizator');
 const driverIdUtilizator = localStorage.getItem('driverIdUtilizator');
 
 if (statusLogat !== 'da') {
-    window.location.href = 'login.html';
-} else {
-    const currentPage = window.location.pathname.split('/').pop();
-    if (rolUtilizator === 'client' && currentPage === 'adminpanellogpage.html') {
-        window.location.href = 'clientpanel.html';
-    } else if (rolUtilizator === 'admin' && currentPage === 'clientpanel.html') {
-        window.location.href = 'adminpanellogpage.html';
-    }
+    window.location.replace('login.html');
 }
 // Rulăm funcțiile când documentul s-a încărcat complet
 document.addEventListener("DOMContentLoaded", () => {

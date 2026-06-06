@@ -17,7 +17,7 @@
   <header>
     <div class="nav-container">
       <a class="brand" href="index.html">
-        <span>Fleet</span>ly
+        <i class="fa-solid fa-car-side" style="color: var(--text-primary); margin-right: 8px;"></i><span>Fleetly</span>
       </a>
       <ul class="nav-menu">
         <li><a href="index.html" class="active">Acasă</a></li>
@@ -25,7 +25,7 @@
         <li><a href="servicii.html">Servicii</a></li>
         <li><a href="avantaje.html">Avantaje</a></li>
         <li><a href="noutati.html">Noutăți</a></li>
-        <li><a href="adminpanellogpage.html">Portal</a></li>
+        <li><a href="login.html">Portal</a></li>
       </ul>
       <a class="btn btn-primary" href="#cautare">Caută Mașină</a>
     </div>
@@ -221,6 +221,13 @@
           </div>
         </div>
       </div>
+      
+      <!-- No Results Alert -->
+      <div id="no-results" style="display: none; text-align: center; padding: 4rem 2rem; color: var(--text-secondary); grid-column: 1 / -1; background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 6px; width: 100%;">
+        <i class="fa-solid fa-car-burst" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block;"></i>
+        <h3 style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--text-primary); margin-bottom: 0.5rem;">Din păcate, mașina căutată nu există.</h3>
+        <p style="font-size: 0.95rem;">Încearcă să cauți alte cuvinte cheie sau resetează filtrele aplicate.</p>
+      </div>
     </div>
   </section>
 
@@ -323,8 +330,8 @@
           <h3>Link-uri Utile</h3>
           <ul class="footer-links">
             <li><a href="noutati.html">Noutăți &amp; Blog</a></li>
-            <li><a href="adminpanellogpage.html">Portal Clienți</a></li>
-            <li><a href="adminpanellogpage.html">Autentificare Șoferi</a></li>
+            <li><a href="login.html">Portal Clienți</a></li>
+            <li><a href="login.html">Autentificare Șoferi</a></li>
             <li><a href="mailto:office@fleetly.ro">Asistență Client</a></li>
           </ul>
         </div>

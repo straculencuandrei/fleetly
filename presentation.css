@@ -482,6 +482,7 @@ header {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  pointer-events: none; /* Prevents flickering on hover */
 }
 
 .car-badge.available {
@@ -506,9 +507,9 @@ header {
 }
 
 .car-title {
-  font-family: var(--font-serif);
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 1.3rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
@@ -724,7 +725,7 @@ header {
 .modal-car-info {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem; /* Increased gap for better hierarchy */
 }
 
 .modal-car-title {
@@ -736,25 +737,37 @@ header {
 .modal-car-description {
   font-size: 0.95rem;
   color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
 }
 
 .modal-specs-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin: 1rem 0;
+  grid-template-columns: 1fr; /* Changed to single column for cleaner, wider presentation */
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
 }
 
 .modal-spec-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding: 0.8rem 0;
   border-bottom: 1px solid var(--border-light);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  gap: 1.5rem;
+}
+
+.modal-spec-row:last-child {
+  border-bottom: none;
 }
 
 .modal-spec-row span:first-child {
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .modal-spec-row span:last-child {

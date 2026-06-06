@@ -6,6 +6,13 @@ const driverIdUtilizator = localStorage.getItem('driverIdUtilizator');
 
 if (statusLogat !== 'da') {
     window.location.href = 'login.html';
+} else {
+    const currentPage = window.location.pathname.split('/').pop();
+    if (rolUtilizator === 'client' && currentPage === 'adminpanellogpage.html') {
+        window.location.href = 'clientpanel.html';
+    } else if (rolUtilizator === 'admin' && currentPage === 'clientpanel.html') {
+        window.location.href = 'adminpanellogpage.html';
+    }
 }
 // Rulăm funcțiile când documentul s-a încărcat complet
 document.addEventListener("DOMContentLoaded", () => {

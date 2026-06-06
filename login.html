@@ -88,6 +88,17 @@
     </div>
 
     <script>
+        // Dacă utilizatorul este deja logat, îl redirecționăm direct spre panoul corespunzător
+        const statusLogatAcum = localStorage.getItem('statusLogat');
+        const rolUtilizatorAcum = localStorage.getItem('rolUtilizator');
+        if (statusLogatAcum === 'da') {
+            if (rolUtilizatorAcum === 'client') {
+                window.location.href = 'clientpanel.html';
+            } else {
+                window.location.href = 'adminpanellogpage.html';
+            }
+        }
+
         document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -136,7 +147,11 @@
                 }
                 
                 // Trimitem utilizatorul direct în Dashboard
-                window.location.href = 'adminpanellogpage.html';
+                if (contGasit.rol === 'client') {
+                    window.location.href = 'clientpanel.html';
+                } else {
+                    window.location.href = 'adminpanellogpage.html';
+                }
             } else {
                 // Afișăm eroarea în caz de credențiale greșite
                 document.getElementById('mesajEroare').style.display = 'block';

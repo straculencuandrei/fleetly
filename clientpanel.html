@@ -4,15 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-        // Route Guard: Verifică autentificarea instantaneu înainte ca restul DOM-ului să fie încărcat
-        if (localStorage.getItem('statusLogat') !== 'da') {
-            window.location.replace('login.html');
-        } else {
-            const rol = localStorage.getItem('rolUtilizator');
-            if (rol === 'admin') {
-                window.location.replace('adminpanellogpage.html');
+        // ROUTE GUARD — rulează sincron înainte ca orice element vizual să se randeze.
+        document.documentElement.style.visibility = 'hidden';
+
+        (function() {
+            var logat    = localStorage.getItem('statusLogat');
+            var rol      = localStorage.getItem('rolUtilizator');
+            var session  = sessionStorage.getItem('fleetly_session');
+
+            var clientOk = logat === 'da' && rol === 'client' && session === 'client_verified';
+
+            if (!clientOk) {
+                localStorage.removeItem('statusLogat');
+                localStorage.removeItem('rolUtilizator');
+                sessionStorage.removeItem('fleetly_session');
+                window.location.replace('login.html');
+            } else {
+                document.documentElement.style.visibility = 'visible';
             }
-        }
+        })();
     </script>
     <title>Fleetly - Portal Client</title>
     

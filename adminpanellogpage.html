@@ -4,15 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-        // Route Guard: Verifică autentificarea instantaneu înainte ca restul DOM-ului să fie încărcat
-        if (localStorage.getItem('statusLogat') !== 'da') {
-            window.location.replace('login.html');
-        } else {
-            const rol = localStorage.getItem('rolUtilizator');
-            if (rol === 'client') {
-                window.location.replace('clientpanel.html');
+        // ROUTE GUARD — rulează sincron înainte ca orice element vizual să se randeze.
+        // Ascundem imediat documentul pentru a preveni flash de conținut protejat.
+        document.documentElement.style.visibility = 'hidden';
+
+        (function() {
+            var logat    = localStorage.getItem('statusLogat');
+            var rol      = localStorage.getItem('rolUtilizator');
+            // sessionStorage există DOAR în tab-ul curent al browserului.
+            // Dacă utilizatorul tastează URL-ul direct într-un tab nou,
+            // tokenul 'fleetly_session' lipseşte → acces blocat.
+            var session  = sessionStorage.getItem('fleetly_session');
+
+            var adminOk  = logat === 'da' && rol === 'admin' && session === 'admin_verified';
+
+            if (!adminOk) {
+                // Ştergem orice urmă de sesiune parţial validă şi trimitem la login
+                localStorage.removeItem('statusLogat');
+                localStorage.removeItem('rolUtilizator');
+                sessionStorage.removeItem('fleetly_session');
+                window.location.replace('login.html');
+            } else {
+                // Sesiune validă — afişăm pagina
+                document.documentElement.style.visibility = 'visible';
             }
-        }
+        })();
     </script>
     <title>Fleetly - Management Parc Auto</title>
     

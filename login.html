@@ -210,7 +210,7 @@
                     localStorage.removeItem("fleet_tires");
                 }
 
-                // Salvăm starea sesiunii
+                // Salvăm starea sesiunii în localStorage (persistentă)
                 localStorage.setItem('statusLogat', 'da');
                 localStorage.setItem('rolUtilizator', contGasit.rol);
                 if (contGasit.driverId) {
@@ -218,6 +218,11 @@
                 } else {
                     localStorage.removeItem('driverIdUtilizator');
                 }
+
+                // Token de sesiune în sessionStorage (există DOAR în tab-ul curent).
+                // Dacă cineva tastează URL-ul direct într-un tab nou, acest token lipseşte
+                // şi page guard-ul blochează accesul indiferent de ce e în localStorage.
+                sessionStorage.setItem('fleetly_session', contGasit.rol + '_verified');
                 
                 // Trimitem utilizatorul direct în Dashboard
                 if (contGasit.rol === 'client') {

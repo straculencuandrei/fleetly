@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ro">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,10 @@
         // ROUTE GUARD — rulează sincron înainte ca orice element vizual să se randeze.
         document.documentElement.style.visibility = 'hidden';
 
-        (function() {
-            var logat    = localStorage.getItem('statusLogat');
-            var rol      = localStorage.getItem('rolUtilizator');
-            var session  = sessionStorage.getItem('fleetly_session');
+        (function () {
+            var logat = localStorage.getItem('statusLogat');
+            var rol = localStorage.getItem('rolUtilizator');
+            var session = sessionStorage.getItem('fleetly_session');
 
             var clientOk = logat === 'da' && rol === 'client' && session === 'client_verified';
 
@@ -25,27 +26,29 @@
         })();
     </script>
     <title>Fleetly - Portal Client</title>
-    
+
     <!-- Link FontAwesome pentru pictograme premium -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Stilurile aplicației -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="role-client">
     <div class="app-container">
         <!-- Sidebar stânga -->
         <aside class="sidebar">
-            <div class="logo-container">
+            <!-- Schimbat din <div> în <a> pentru redirecționare la pagina de start web -->
+            <a href="index.html" class="logo-container" style="text-decoration: none; color: inherit;">
                 <div class="logo-icon">
                     <i class="fa-solid fa-car-side"></i>
                 </div>
                 <div class="logo-text">
-                    <h1>Fleetly</h1>
+                    <h1>Fleetly Portal</h1>
                     <p>Parc Auto</p>
                 </div>
-            </div>
-            
+            </a>
+
             <nav class="nav-menu">
                 <a href="#dashboard" class="nav-item active" data-tab="dashboard">
                     <i class="fa-solid fa-chart-line"></i>
@@ -76,13 +79,14 @@
                     <span>Anvelope</span>
                 </a>
             </nav>
-            
+
             <div class="sidebar-footer">
                 <div class="project-badge">
                     <span>Proiect de Grup</span>
                     <strong>Management Parc Auto</strong>
                 </div>
-                <button class="btn btn-danger" onclick="logout()" style="width: 100%; justify-content: center; margin-top: 12px;">
+                <button class="btn btn-danger" onclick="logout()"
+                    style="width: 100%; justify-content: center; margin-top: 12px;">
                     <i class="fa-solid fa-right-from-bracket"></i> Deconectare
                 </button>
             </div>
@@ -90,7 +94,7 @@
 
         <!-- Conținut principal (Main) -->
         <main class="main-content">
-            
+
             <!-- SECȚIUNE: DASHBOARD -->
             <section id="dashboard" class="tab-content active">
                 <div class="content-header">
@@ -104,7 +108,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Carduri Statistici -->
                 <div class="stats-grid">
                     <!-- Carduri Admin -->
@@ -179,7 +183,8 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Vinietă</span>
-                            <span class="stat-value" style="font-size: 22px;" id="stat-client-vignette-status">N/A</span>
+                            <span class="stat-value" style="font-size: 22px;"
+                                id="stat-client-vignette-status">N/A</span>
                         </div>
                     </div>
                 </div>
@@ -189,7 +194,8 @@
                     <!-- Panou Alerte Scadențe (Asigurări & Viniete) -->
                     <div class="dashboard-panel">
                         <div class="panel-header">
-                            <h3><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-rose); margin-right: 8px;"></i> Alerte Scadență</h3>
+                            <h3><i class="fa-solid fa-triangle-exclamation"
+                                    style="color: var(--accent-rose); margin-right: 8px;"></i> Alerte Scadență</h3>
                             <span class="badge badge-danger" id="alerts-count">0 Alerte</span>
                         </div>
                         <div class="alerts-list" id="dashboard-alerts">
@@ -200,7 +206,8 @@
                     <!-- Panou Stare Sumar Mașini -->
                     <div class="dashboard-panel">
                         <div class="panel-header">
-                            <h3><i class="fa-solid fa-circle-info" style="color: var(--accent-blue); margin-right: 8px;"></i> Activitate Parc</h3>
+                            <h3><i class="fa-solid fa-circle-info"
+                                    style="color: var(--accent-blue); margin-right: 8px;"></i> Activitate Parc</h3>
                             <span class="badge badge-info">Status rapid</span>
                         </div>
                         <div class="alerts-list" id="dashboard-activity">
@@ -223,11 +230,12 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="filter-bar">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-cars" class="search-input" placeholder="Caută după marcă, model sau nr. înmatriculare...">
+                        <input type="text" id="search-cars" class="search-input"
+                            placeholder="Caută după marcă, model sau nr. înmatriculare...">
                     </div>
                     <select id="filter-car-status" class="select-input">
                         <option value="">Toate statusurile</option>
@@ -273,7 +281,8 @@
                 <div class="filter-bar">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-drivers" class="search-input" placeholder="Caută șofer după nume sau telefon...">
+                        <input type="text" id="search-drivers" class="search-input"
+                            placeholder="Caută șofer după nume sau telefon...">
                     </div>
                 </div>
 
@@ -318,7 +327,8 @@
                 <div class="filter-bar">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-service" class="search-input" placeholder="Caută după mașină sau descriere...">
+                        <input type="text" id="search-service" class="search-input"
+                            placeholder="Caută după mașină sau descriere...">
                     </div>
                 </div>
 
@@ -474,7 +484,8 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="car-year">An Fabricație</label>
-                            <input type="number" id="car-year" class="form-control" placeholder="ex: 2021" min="1990" max="2027" required>
+                            <input type="number" id="car-year" class="form-control" placeholder="ex: 2021" min="1990"
+                                max="2027" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="car-fuel">Tip Combustibil</label>
@@ -525,7 +536,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="driver-phone">Telefon</label>
-                            <input type="tel" id="driver-phone" class="form-control" placeholder="ex: 0722000000" required>
+                            <input type="tel" id="driver-phone" class="form-control" placeholder="ex: 0722000000"
+                                required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -541,7 +553,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-driver')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-driver')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Salvează Șofer</button>
                 </div>
             </form>
@@ -572,12 +585,14 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="service-desc">Descriere Intervenție</label>
-                        <textarea id="service-desc" class="form-control" rows="3" placeholder="Descrieți defecțiunea sau ce s-a schimbat..." required></textarea>
+                        <textarea id="service-desc" class="form-control" rows="3"
+                            placeholder="Descrieți defecțiunea sau ce s-a schimbat..." required></textarea>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="service-cost">Cost Intervenție (Lei)</label>
-                            <input type="number" id="service-cost" class="form-control" min="0" placeholder="ex: 350" required>
+                            <input type="number" id="service-cost" class="form-control" min="0" placeholder="ex: 350"
+                                required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="service-status">Stadiu</label>
@@ -589,7 +604,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-service')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-service')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Înregistrează</button>
                 </div>
             </form>
@@ -611,11 +627,14 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="report-desc">Descrierea Defecțiunii</label>
-                        <textarea id="report-desc" class="form-control" rows="4" placeholder="Vă rugăm să detaliați defecțiunea observată (ex: zgomot la frânare, martor motor aprins)..." required></textarea>
+                        <textarea id="report-desc" class="form-control" rows="4"
+                            placeholder="Vă rugăm să detaliați defecțiunea observată (ex: zgomot la frânare, martor motor aprins)..."
+                            required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-report-issue')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-report-issue')">Anulează</button>
                     <button type="submit" class="btn btn-danger">Trimite Sesizarea</button>
                 </div>
             </form>
@@ -650,11 +669,13 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="insurance-company">Companie Asigurător</label>
-                            <input type="text" id="insurance-company" class="form-control" placeholder="ex: Allianz, Groupama" required>
+                            <input type="text" id="insurance-company" class="form-control"
+                                placeholder="ex: Allianz, Groupama" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="insurance-cost">Cost Poliță (Lei)</label>
-                            <input type="number" id="insurance-cost" class="form-control" min="0" placeholder="ex: 1200" required>
+                            <input type="number" id="insurance-cost" class="form-control" min="0" placeholder="ex: 1200"
+                                required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -669,7 +690,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-insurance')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-insurance')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Salvează Poliță</button>
                 </div>
             </form>
@@ -695,7 +717,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="vignette-country">Țară</label>
-                            <input type="text" id="vignette-country" class="form-control" placeholder="ex: România, Ungaria" required>
+                            <input type="text" id="vignette-country" class="form-control"
+                                placeholder="ex: România, Ungaria" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -711,7 +734,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="vignette-cost">Cost Vinietă (Lei)</label>
-                            <input type="number" id="vignette-cost" class="form-control" min="0" placeholder="ex: 140" required>
+                            <input type="number" id="vignette-cost" class="form-control" min="0" placeholder="ex: 140"
+                                required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -726,7 +750,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-vignette')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-vignette')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Salvează Vinietă</button>
                 </div>
             </form>
@@ -762,11 +787,13 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="tires-size">Dimensiuni Set</label>
-                            <input type="text" id="tires-size" class="form-control" placeholder="ex: 205/55 R16" required>
+                            <input type="text" id="tires-size" class="form-control" placeholder="ex: 205/55 R16"
+                                required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="tires-brand">Marcă</label>
-                            <input type="text" id="tires-brand" class="form-control" placeholder="ex: Continental" required>
+                            <input type="text" id="tires-brand" class="form-control" placeholder="ex: Continental"
+                                required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -789,7 +816,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-tires')">Anulează</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('modal-tires')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Salvează Set</button>
                 </div>
             </form>
@@ -800,4 +828,5 @@
     <script src="mockData.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>

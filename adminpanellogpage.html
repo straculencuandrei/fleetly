@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetly - Management Parc Auto</title>
+    
+    <!-- Link FontAwesome pentru pictograme premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Stilurile aplicației -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar stânga -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Fleetly</h1>
+                    <p>Parc Auto</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#cars" class="nav-item" data-tab="cars">
+                    <i class="fa-solid fa-car"></i>
+                    <span>Gestiune Mașini</span>
+                </a>
+                <a href="#drivers" class="nav-item doar-admin" data-tab="drivers">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Gestiune Șoferi</span>
+                </a>
+                <a href="#service" class="nav-item" data-tab="service">
+                    <i class="fa-solid fa-wrench"></i>
+                    <span>Management Service</span>
+                </a>
+                <a href="#insurances" class="nav-item" data-tab="insurances">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Asigurări</span>
+                </a>
+                <a href="#vignettes" class="nav-item" data-tab="vignettes">
+                    <i class="fa-solid fa-road"></i>
+                    <span>Viniete</span>
+                </a>
+                <a href="#tires" class="nav-item" data-tab="tires">
+                    <i class="fa-solid fa-circle-notch"></i>
+                    <span>Anvelope</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="project-badge">
+                    <span>Proiect de Grup</span>
+                    <strong>Management Parc Auto</strong>
+                </div>
+                <button class="btn btn-danger" onclick="logout()" style="width: 100%; justify-content: center; margin-top: 12px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Deconectare
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conținut principal (Main) -->
+        <main class="main-content">
+            
+            <!-- SECȚIUNE: DASHBOARD -->
+            <section id="dashboard" class="tab-content active">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Privire de Ansamblu</h2>
+                        <p>Statistici generale și alerte active pentru parcul auto.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-secondary" onclick="resetDatabase()">
+                            <i class="fa-solid fa-rotate-left"></i> Reinițializează Datele Demo
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Carduri Statistici -->
+                <div class="stats-grid">
+                    <!-- Carduri Admin -->
+                    <div class="stat-card doar-admin">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Mașini</span>
+                            <span class="stat-value" id="stat-total-cars">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-admin">
+                        <div class="stat-icon emerald">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Șoferi Activi</span>
+                            <span class="stat-value" id="stat-total-drivers">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-admin">
+                        <div class="stat-icon rose">
+                            <i class="fa-solid fa-wrench"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">În Service</span>
+                            <span class="stat-value" id="stat-cars-service">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-admin">
+                        <div class="stat-icon amber">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Costuri Service (Lei)</span>
+                            <span class="stat-value" id="stat-total-cost">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Carduri Client -->
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Status Mașină</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-car-status">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon emerald">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Valabilitate Permis</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-license-days">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon rose">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Poliță RCA</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-rca-status">N/A</span>
+                        </div>
+                    </div>
+                    <div class="stat-card doar-client">
+                        <div class="stat-icon amber">
+                            <i class="fa-solid fa-road"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Vinietă</span>
+                            <span class="stat-value" style="font-size: 22px;" id="stat-client-vignette-status">N/A</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalii Panouri Dashboard (Alerte și Stadiu Service) -->
+                <div class="dashboard-details-grid">
+                    <!-- Panou Alerte Scadențe (Asigurări & Viniete) -->
+                    <div class="dashboard-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-rose); margin-right: 8px;"></i> Alerte Scadență</h3>
+                            <span class="badge badge-danger" id="alerts-count">0 Alerte</span>
+                        </div>
+                        <div class="alerts-list" id="dashboard-alerts">
+                            <!-- Populat din JS -->
+                        </div>
+                    </div>
+
+                    <!-- Panou Stare Sumar Mașini -->
+                    <div class="dashboard-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-circle-info" style="color: var(--accent-blue); margin-right: 8px;"></i> Activitate Parc</h3>
+                            <span class="badge badge-info">Status rapid</span>
+                        </div>
+                        <div class="alerts-list" id="dashboard-activity">
+                            <!-- Populat din JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: GESTIUNE MAȘINI -->
+            <section id="cars" class="tab-content">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Gestiune Mașini</h2>
+                        <p>Adăugați, editați sau eliminați vehiculele din parcul auto.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-car')">
+                            <i class="fa-solid fa-plus"></i> Adaugă Mașină
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filter-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-cars" class="search-input" placeholder="Caută după marcă, model sau nr. înmatriculare...">
+                    </div>
+                    <select id="filter-car-status" class="select-input">
+                        <option value="">Toate statusurile</option>
+                        <option value="Activ">Active</option>
+                        <option value="În Service">În Service</option>
+                        <option value="Inactiv">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Nr. Înmatriculare</th>
+                                <th>Marcă și Model</th>
+                                <th>An Fabricatie</th>
+                                <th>Combustibil</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cars-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: GESTIUNE ȘOFERI -->
+            <section id="drivers" class="tab-content doar-admin">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Gestiune Șoferi</h2>
+                        <p>Evidența conducătorilor auto și a mașinilor alocate.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-driver')">
+                            <i class="fa-solid fa-plus"></i> Adaugă Șofer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-drivers" class="search-input" placeholder="Caută șofer după nume sau telefon...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Nume Complet</th>
+                                <th>Categorii permis</th>
+                                <th>Telefon</th>
+                                <th>Dată Expirare Permis</th>
+                                <th>Mașină Alocată</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="drivers-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: MANAGEMENT SERVICE -->
+            <section id="service" class="tab-content">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Management Service</h2>
+                        <p>Urmăriți reviziile, reparațiile și costurile de întreținere.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-service')">
+                            <i class="fa-solid fa-plus"></i> Înregistrează Service
+                        </button>
+                    </div>
+                    <div class="header-actions doar-client">
+                        <button class="btn btn-danger" onclick="openModal('modal-report-issue')">
+                            <i class="fa-solid fa-circle-exclamation"></i> Raportează o Defecțiune
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-service" class="search-input" placeholder="Caută după mașină sau descriere...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Mașină</th>
+                                <th>Dată Intrare</th>
+                                <th>Descriere Defecțiune / Revizie</th>
+                                <th>Cost (Lei)</th>
+                                <th>Stadiu</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: ASIGURĂRI -->
+            <section id="insurances" class="tab-content">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Evidență Asigurări</h2>
+                        <p>Monitorizați valabilitatea polițelor RCA și CASCO pentru tot parcul auto.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-insurance')">
+                            <i class="fa-solid fa-plus"></i> Adaugă Poliță RCA/CASCO
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Mașină</th>
+                                <th>Tip Poliță</th>
+                                <th>Companie Asigurător</th>
+                                <th>Cost Poliță (Lei)</th>
+                                <th>Dată Start</th>
+                                <th>Dată Expirare</th>
+                                <th>Stare</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="insurances-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: VINIETE -->
+            <section id="vignettes" class="tab-content">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Gestiune Viniete de Drum</h2>
+                        <p>Asigurați-vă că vehiculele au taxele de drum achitate la zi.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-vignette')">
+                            <i class="fa-solid fa-plus"></i> Adaugă Vinietă
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Mașină</th>
+                                <th>Țară</th>
+                                <th>Valabilitate</th>
+                                <th>Dată Început</th>
+                                <th>Dată Expirare</th>
+                                <th>Cost (Lei)</th>
+                                <th>Stare</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vignettes-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECȚIUNE: ANVELOPE -->
+            <section id="tires" class="tab-content">
+                <div class="content-header">
+                    <div class="header-title">
+                        <h2>Management Anvelope</h2>
+                        <p>Monitorizați seturile de anvelope, starea de uzură și locația lor.</p>
+                    </div>
+                    <div class="header-actions doar-admin">
+                        <button class="btn btn-primary" onclick="openModal('modal-tires')">
+                            <i class="fa-solid fa-plus"></i> Adaugă Anvelope
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Mașină</th>
+                                <th>Sezon</th>
+                                <th>Dimensiuni Set</th>
+                                <th>Marcă Producător</th>
+                                <th>Grad Uzură</th>
+                                <th>Locație Stocare</th>
+                                <th style="text-align: right;">Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tires-table-body">
+                            <!-- Populat din JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ MAȘINĂ -->
+    <div id="modal-car" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-car-title">Adaugă Mașină</h3>
+                <button class="modal-close" onclick="closeModal('modal-car')">&times;</button>
+            </div>
+            <form id="form-car" onsubmit="saveCar(event)">
+                <input type="hidden" id="car-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="car-plate">Număr Înmatriculare</label>
+                        <input type="text" id="car-plate" class="form-control" placeholder="ex: B 123 ABC" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="car-brand">Marcă</label>
+                            <input type="text" id="car-brand" class="form-control" placeholder="ex: Dacia" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="car-model">Model</label>
+                            <input type="text" id="car-model" class="form-control" placeholder="ex: Logan" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="car-year">An Fabricație</label>
+                            <input type="number" id="car-year" class="form-control" placeholder="ex: 2021" min="1990" max="2027" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="car-fuel">Tip Combustibil</label>
+                            <select id="car-fuel" class="form-control" required>
+                                <option value="Benzină">Benzină</option>
+                                <option value="Motorină">Motorină</option>
+                                <option value="Benzină/GPL">Benzină/GPL</option>
+                                <option value="Hibrid">Hibrid</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="car-status">Status Inițial</label>
+                        <select id="car-status" class="form-control" required>
+                            <option value="Activ">Activ</option>
+                            <option value="În Service">În Service</option>
+                            <option value="Inactiv">Inactiv</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-car')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Salvează Mașină</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ ȘOFER -->
+    <div id="modal-driver" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-driver-title">Adaugă Șofer</h3>
+                <button class="modal-close" onclick="closeModal('modal-driver')">&times;</button>
+            </div>
+            <form id="form-driver" onsubmit="saveDriver(event)">
+                <input type="hidden" id="driver-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="driver-name">Nume Complet</label>
+                        <input type="text" id="driver-name" class="form-control" placeholder="ex: Andrei Popa" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="driver-license">Categorii Permis</label>
+                            <input type="text" id="driver-license" class="form-control" placeholder="ex: B, C" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="driver-phone">Telefon</label>
+                            <input type="tel" id="driver-phone" class="form-control" placeholder="ex: 0722000000" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="driver-expiry">Valabilitate Permis (Dată expirare)</label>
+                        <input type="date" id="driver-expiry" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="driver-car">Mașină Alocată</label>
+                        <select id="driver-car" class="form-control">
+                            <option value="">Fără mașină alocată</option>
+                            <!-- Populat din JS -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-driver')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Salvează Șofer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ SERVICE -->
+    <div id="modal-service" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-service-title">Înregistrează Service</h3>
+                <button class="modal-close" onclick="closeModal('modal-service')">&times;</button>
+            </div>
+            <form id="form-service" onsubmit="saveService(event)">
+                <input type="hidden" id="service-id">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="service-car">Selectează Mașină</label>
+                            <select id="service-car" class="form-control" required>
+                                <!-- Populat din JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="service-date">Dată Intrare</label>
+                            <input type="date" id="service-date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="service-desc">Descriere Intervenție</label>
+                        <textarea id="service-desc" class="form-control" rows="3" placeholder="Descrieți defecțiunea sau ce s-a schimbat..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="service-cost">Cost Intervenție (Lei)</label>
+                            <input type="number" id="service-cost" class="form-control" min="0" placeholder="ex: 350" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="service-status">Stadiu</label>
+                            <select id="service-status" class="form-control" required>
+                                <option value="În curs">În curs</option>
+                                <option value="Finalizat">Finalizat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-service')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Înregistrează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: RAPORTEAZĂ DEFECȚIUNE (CLIENT) -->
+    <div id="modal-report-issue" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Raportează o Defecțiune</h3>
+                <button class="modal-close" onclick="closeModal('modal-report-issue')">&times;</button>
+            </div>
+            <form id="form-report-issue" onsubmit="reportIssue(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="report-date">Dată Sesizare</label>
+                        <input type="date" id="report-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="report-desc">Descrierea Defecțiunii</label>
+                        <textarea id="report-desc" class="form-control" rows="4" placeholder="Vă rugăm să detaliați defecțiunea observată (ex: zgomot la frânare, martor motor aprins)..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-report-issue')">Anulează</button>
+                    <button type="submit" class="btn btn-danger">Trimite Sesizarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ ASIGURARE -->
+    <div id="modal-insurance" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-insurance-title">Adaugă Poliță</h3>
+                <button class="modal-close" onclick="closeModal('modal-insurance')">&times;</button>
+            </div>
+            <form id="form-insurance" onsubmit="saveInsurance(event)">
+                <input type="hidden" id="insurance-id">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-car">Selectează Mașină</label>
+                            <select id="insurance-car" class="form-control" required>
+                                <!-- Populat din JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-type">Tip Poliță</label>
+                            <select id="insurance-type" class="form-control" required>
+                                <option value="RCA">RCA</option>
+                                <option value="CASCO">CASCO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-company">Companie Asigurător</label>
+                            <input type="text" id="insurance-company" class="form-control" placeholder="ex: Allianz, Groupama" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-cost">Cost Poliță (Lei)</label>
+                            <input type="number" id="insurance-cost" class="form-control" min="0" placeholder="ex: 1200" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-start">Dată Start</label>
+                            <input type="date" id="insurance-start" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="insurance-expiry">Dată Expirare</label>
+                            <input type="date" id="insurance-expiry" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-insurance')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Salvează Poliță</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ VINIETĂ -->
+    <div id="modal-vignette" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-vignette-title">Adaugă Vinietă</h3>
+                <button class="modal-close" onclick="closeModal('modal-vignette')">&times;</button>
+            </div>
+            <form id="form-vignette" onsubmit="saveVignette(event)">
+                <input type="hidden" id="vignette-id">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-car">Selectează Mașină</label>
+                            <select id="vignette-car" class="form-control" required>
+                                <!-- Populat din JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-country">Țară</label>
+                            <input type="text" id="vignette-country" class="form-control" placeholder="ex: România, Ungaria" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-duration">Durată / Tip</label>
+                            <select id="vignette-duration" class="form-control" required>
+                                <option value="7 Zile">7 Zile</option>
+                                <option value="10 Zile">10 Zile</option>
+                                <option value="30 Zile">30 Zile</option>
+                                <option value="90 Zile">90 Zile</option>
+                                <option value="1 An">1 An</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-cost">Cost Vinietă (Lei)</label>
+                            <input type="number" id="vignette-cost" class="form-control" min="0" placeholder="ex: 140" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-start">Dată Start</label>
+                            <input type="date" id="vignette-start" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="vignette-expiry">Dată Expirare</label>
+                            <input type="date" id="vignette-expiry" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-vignette')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Salvează Vinietă</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADAUGĂ / EDITEAZĂ ANVELOPE -->
+    <div id="modal-tires" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-tires-title">Adaugă Set Anvelope</h3>
+                <button class="modal-close" onclick="closeModal('modal-tires')">&times;</button>
+            </div>
+            <form id="form-tires" onsubmit="saveTires(event)">
+                <input type="hidden" id="tires-id">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="tires-car">Selectează Mașină</label>
+                            <select id="tires-car" class="form-control" required>
+                                <!-- Populat din JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tires-season">Sezon</label>
+                            <select id="tires-season" class="form-control" required>
+                                <option value="Vară">Vară</option>
+                                <option value="Iarnă">Iarnă</option>
+                                <option value="All-Season">All-Season</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="tires-size">Dimensiuni Set</label>
+                            <input type="text" id="tires-size" class="form-control" placeholder="ex: 205/55 R16" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tires-brand">Marcă</label>
+                            <input type="text" id="tires-brand" class="form-control" placeholder="ex: Continental" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="tires-state">Grad Uzură</label>
+                            <select id="tires-state" class="form-control" required>
+                                <option value="Nou">Nou</option>
+                                <option value="Excelent">Excelent</option>
+                                <option value="Bun">Bun</option>
+                                <option value="Uzat">Uzat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tires-location">Locație Stocare</label>
+                            <select id="tires-location" class="form-control" required>
+                                <option value="Pe mașină">Pe mașină</option>
+                                <option value="Depozit">Depozit</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-tires')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Salvează Set</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="mockData.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

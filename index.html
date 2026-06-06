@@ -1,782 +1,763 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleetly - Management Parc Auto</title>
-    
-    <!-- Link FontAwesome pentru pictograme premium -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Stilurile aplicației -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleetly - Management Parc Auto</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08101f;
+      --surface: rgba(15, 24, 44, 0.93);
+      --surface-soft: rgba(18, 30, 54, 0.88);
+      --text: #eef6ff;
+      --muted: #9bb4cf;
+      --accent: #00d1c4;
+      --accent-strong: #5e9cff;
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 24px 80px rgba(0,0,0,0.22);
+      font-family: Inter, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at top right, rgba(0,209,196,0.16), transparent 24%),
+                  radial-gradient(circle at bottom left, rgba(94,156,255,0.14), transparent 20%),
+                  linear-gradient(180deg, #07101f 0%, #091823 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(6, 14, 28, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.5rem 0 4rem;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1rem 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .brand span { color: var(--accent); }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.4rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #00d1c4, #5e9cff);
+      color: #08101f;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 18px 35px rgba(0,209,196,0.18);
+    }
+
+    .hero {
+      min-height: calc(100vh - 100px);
+      display: grid;
+      align-items: center;
+      gap: 2rem;
+      position: relative;
+      padding-top: 2rem;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.45;
+    }
+
+    .hero::before { width: 360px; height: 360px; top: -70px; left: -40px; background: rgba(0,209,196,0.24); }
+    .hero::after { width: 280px; height: 280px; bottom: -50px; right: -30px; background: rgba(94,156,255,0.24); }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.8fr);
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      line-height: 0.95;
+      margin: 0;
+      max-width: 11ch;
+    }
+
+    .hero-copy p {
+      color: var(--muted);
+      max-width: 64ch;
+      line-height: 1.9;
+      margin: 1.5rem 0 2rem;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .hero-actions a {
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 460px;
+      padding: 1.8rem;
+      border-radius: 2rem;
+      background: rgba(8,17,31,0.82);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-visual .panel {
+      position: absolute;
+      inset: 1.6rem;
+      border-radius: 1.8rem;
+      background: linear-gradient(135deg, rgba(0,209,196,0.12), rgba(94,156,255,0.1));
+      backdrop-filter: blur(18px);
+      pointer-events: none;
+    }
+
+    .hero-visual .hero-flags {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-visual .hero-card {
+      border-radius: 1.5rem;
+      padding: 1.6rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      gap: 0.85rem;
+      min-height: 160px;
+      animation: fadeInUp 0.9s ease both;
+    }
+
+    .hero-visual .hero-image {
+      width: 100%;
+      display: block;
+      border-radius: 1.8rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .page-card-img {
+      width: 100%;
+      border-radius: 1.4rem;
+      object-fit: cover;
+      min-height: 180px;
+      margin-bottom: 1rem;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+    }
+
+    .hero-card span { color: var(--accent); font-weight: 700; }
+    .hero-card h3 { margin: 0; font-size: 1.1rem; }
+    .hero-card p { margin: 0; color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
+
+    .overview-panel, .alerts-section, .activity-section {
+      margin-top: 3.5rem;
+    }
+
+    .alerts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 1rem;
+    }
+
+    .alert-card {
+      padding: 1.35rem;
+      border-radius: 1.6rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 16px 35px rgba(0,0,0,0.12);
+    }
+
+    .alert-card .alert-label {
+      margin: 0 0 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .activity-section .feature-panel {
+      padding: 1.8rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .stat-card {
+      padding: 1.35rem;
+      border-radius: 1.5rem;
+      background: var(--surface-soft);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.16);
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 0.7rem;
+      color: #fff;
+    }
+
+    .stat-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.96rem;
+    }
+
+    section {
+      margin-top: 3.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title span {
+      display: inline-flex;
+      width: 0.9rem;
+      height: 0.9rem;
+      background: linear-gradient(135deg,#00d1c4,#5e9cff);
+      border-radius: 50%;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(1.6rem,2.3vw,2rem);
+    }
+
+    .cards-grid {
+      display: grid;
+      gap: 1.25rem;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+
+    .card {
+      padding: 1.65rem;
+      border-radius: 1.7rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0,209,196,0.36);
+      background: rgba(0,209,196,0.07);
+    }
+
+    .card h3 { margin: 0 0 0.85rem; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.8; }
+
+    .card .tag {
+      display: inline-flex;
+      margin-top: 1rem;
+      color: var(--accent-strong);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 0.9rem;
+    }
+
+    .grid-2 { grid-template-columns: 1.4fr 1fr; gap: 2rem; }
+    .feature-panel {
+      display: grid;
+      gap: 1rem;
+      padding: 2rem;
+      border-radius: 2rem;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-panel h3 { margin: 0 0 0.8rem; }
+    .feature-panel p { color: var(--muted); line-height: 1.8; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-button {
+      padding: 1rem 1.1rem;
+      border-radius: 1.2rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease;
+    }
+
+    .tab-button.active {
+      background: rgba(0,209,196,0.18);
+      border-color: rgba(0,209,196,0.35);
+      transform: translateY(-1px);
+    }
+
+    .tab-content {
+      padding: 1.8rem;
+      border-radius: 1.7rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 220px;
+    }
+
+    .tab-content h3 {
+      margin-top: 0;
+    }
+
+    .quick-search-panel {
+      display: grid;
+      gap: 1.5rem;
+      padding: 1.8rem;
+      border-radius: 2rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 1rem;
+    }
+
+    .search-input,
+    .search-select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 1rem 1.1rem;
+      border-radius: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .search-input::placeholder {
+      color: rgba(255,255,255,0.55);
+    }
+
+    .search-results {
+      padding: 1.6rem;
+      border-radius: 1.6rem;
+      background: rgba(0,209,196,0.08);
+      border: 1px solid rgba(0,209,196,0.2);
+      color: var(--text);
+      min-height: 140px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .pill-list span {
+      display: inline-flex;
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .cta-banner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 2rem;
+      border-radius: 2rem;
+      background: linear-gradient(135deg, rgba(0,209,196,0.16), rgba(94,156,255,0.16));
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cta-banner h3 { margin: 0; }
+    .cta-banner a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 700;
+      background: linear-gradient(135deg,#5e9cff,#00d1c4);
+      color: #08101f;
+      text-decoration: none;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 2rem 0 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 1.6rem;
+      align-items: start;
+    }
+
+    .footer-grid p, .footer-grid a {
+      color: var(--muted);
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .footer-logo {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-meta {
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .hero-grid, .hero-copy, .hero-visual, .cards-grid, .section-title, .quick-search-panel, .cta-banner {
+      animation: fadeInUp 0.9s ease both;
+    }
+
+    .hero-copy { animation-delay: 0.05s; }
+    .hero-visual { animation-delay: 0.1s; }
+    .cards-grid .card { animation: fadeInUp 0.85s ease both; }
+    .cards-grid .card:nth-child(1) { animation-delay: 0.15s; }
+    .cards-grid .card:nth-child(2) { animation-delay: 0.22s; }
+    .cards-grid .card:nth-child(3) { animation-delay: 0.29s; }
+    .cards-grid .card:nth-child(4) { animation-delay: 0.36s; }
+
+    .hero-card:nth-child(1) { animation-delay: 0.18s; }
+    .hero-card:nth-child(2) { animation-delay: 0.26s; }
+    .hero-card:nth-child(3) { animation-delay: 0.34s; }
+    .hero-card:nth-child(4) { animation-delay: 0.42s; }
+
+    .btn-primary:hover,
+    .hero-card:hover,
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media(max-width: 980px) {
+      .hero-grid, .stats-grid, .grid-2, .cards-grid, .footer-grid, .tabs { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 360px; }
+    }
+
+    @media(max-width: 640px) {
+      .nav-inner { flex-direction: column; align-items: stretch; }
+      nav { justify-content: center; }
+      .hero { padding-top: 1rem; }
+      .hero-copy h1 { font-size: 2.6rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar stânga -->
-        <aside class="sidebar">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-car-side"></i>
-                </div>
-                <div class="logo-text">
-                    <h1>Fleetly</h1>
-                    <p>Parc Auto</p>
-                </div>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="#dashboard" class="nav-item active" data-tab="dashboard">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#cars" class="nav-item" data-tab="cars">
-                    <i class="fa-solid fa-car"></i>
-                    <span>Gestiune Mașini</span>
-                </a>
-                <a href="#drivers" class="nav-item doar-admin" data-tab="drivers">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Gestiune Șoferi</span>
-                </a>
-                <a href="#service" class="nav-item" data-tab="service">
-                    <i class="fa-solid fa-wrench"></i>
-                    <span>Management Service</span>
-                </a>
-                <a href="#insurances" class="nav-item" data-tab="insurances">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>Asigurări</span>
-                </a>
-                <a href="#vignettes" class="nav-item" data-tab="vignettes">
-                    <i class="fa-solid fa-road"></i>
-                    <span>Viniete</span>
-                </a>
-                <a href="#tires" class="nav-item" data-tab="tires">
-                    <i class="fa-solid fa-circle-notch"></i>
-                    <span>Anvelope</span>
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <div class="project-badge">
-                    <span>Proiect de Grup</span>
-                    <strong>Management Parc Auto</strong>
-                </div>
-                <button class="btn btn-danger" onclick="logout()" style="width: 100%; justify-content: center; margin-top: 12px;">
-                    <i class="fa-solid fa-right-from-bracket"></i> Deconectare
-                </button>
-            </div>
-        </aside>
-
-        <!-- Conținut principal (Main) -->
-        <main class="main-content">
-            
-            <!-- SECȚIUNE: DASHBOARD -->
-            <section id="dashboard" class="tab-content active">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Privire de Ansamblu</h2>
-                        <p>Statistici generale și alerte active pentru parcul auto.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-secondary" onclick="resetDatabase()">
-                            <i class="fa-solid fa-rotate-left"></i> Reinițializează Datele Demo
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Carduri Statistici -->
-                <div class="stats-grid">
-                    <!-- Carduri Admin -->
-                    <div class="stat-card doar-admin">
-                        <div class="stat-icon blue">
-                            <i class="fa-solid fa-car"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Total Mașini</span>
-                            <span class="stat-value" id="stat-total-cars">0</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-admin">
-                        <div class="stat-icon emerald">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Șoferi Activi</span>
-                            <span class="stat-value" id="stat-total-drivers">0</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-admin">
-                        <div class="stat-icon rose">
-                            <i class="fa-solid fa-wrench"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">În Service</span>
-                            <span class="stat-value" id="stat-cars-service">0</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-admin">
-                        <div class="stat-icon amber">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Costuri Service (Lei)</span>
-                            <span class="stat-value" id="stat-total-cost">0</span>
-                        </div>
-                    </div>
-
-                    <!-- Carduri Client -->
-                    <div class="stat-card doar-client">
-                        <div class="stat-icon blue">
-                            <i class="fa-solid fa-car"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Status Mașină</span>
-                            <span class="stat-value" style="font-size: 22px;" id="stat-client-car-status">N/A</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-client">
-                        <div class="stat-icon emerald">
-                            <i class="fa-solid fa-id-card"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Valabilitate Permis</span>
-                            <span class="stat-value" style="font-size: 22px;" id="stat-client-license-days">N/A</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-client">
-                        <div class="stat-icon rose">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Poliță RCA</span>
-                            <span class="stat-value" style="font-size: 22px;" id="stat-client-rca-status">N/A</span>
-                        </div>
-                    </div>
-                    <div class="stat-card doar-client">
-                        <div class="stat-icon amber">
-                            <i class="fa-solid fa-road"></i>
-                        </div>
-                        <div class="stat-info">
-                            <span class="stat-label">Vinietă</span>
-                            <span class="stat-value" style="font-size: 22px;" id="stat-client-vignette-status">N/A</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detalii Panouri Dashboard (Alerte și Stadiu Service) -->
-                <div class="dashboard-details-grid">
-                    <!-- Panou Alerte Scadențe (Asigurări & Viniete) -->
-                    <div class="dashboard-panel">
-                        <div class="panel-header">
-                            <h3><i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-rose); margin-right: 8px;"></i> Alerte Scadență</h3>
-                            <span class="badge badge-danger" id="alerts-count">0 Alerte</span>
-                        </div>
-                        <div class="alerts-list" id="dashboard-alerts">
-                            <!-- Populat din JS -->
-                        </div>
-                    </div>
-
-                    <!-- Panou Stare Sumar Mașini -->
-                    <div class="dashboard-panel">
-                        <div class="panel-header">
-                            <h3><i class="fa-solid fa-circle-info" style="color: var(--accent-blue); margin-right: 8px;"></i> Activitate Parc</h3>
-                            <span class="badge badge-info">Status rapid</span>
-                        </div>
-                        <div class="alerts-list" id="dashboard-activity">
-                            <!-- Populat din JS -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: GESTIUNE MAȘINI -->
-            <section id="cars" class="tab-content">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Gestiune Mașini</h2>
-                        <p>Adăugați, editați sau eliminați vehiculele din parcul auto.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-car')">
-                            <i class="fa-solid fa-plus"></i> Adaugă Mașină
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="filter-bar">
-                    <div class="search-input-wrapper">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-cars" class="search-input" placeholder="Caută după marcă, model sau nr. înmatriculare...">
-                    </div>
-                    <select id="filter-car-status" class="select-input">
-                        <option value="">Toate statusurile</option>
-                        <option value="Activ">Active</option>
-                        <option value="În Service">În Service</option>
-                        <option value="Inactiv">Inactive</option>
-                    </select>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Nr. Înmatriculare</th>
-                                <th>Marcă și Model</th>
-                                <th>An Fabricatie</th>
-                                <th>Combustibil</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cars-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: GESTIUNE ȘOFERI -->
-            <section id="drivers" class="tab-content doar-admin">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Gestiune Șoferi</h2>
-                        <p>Evidența conducătorilor auto și a mașinilor alocate.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-driver')">
-                            <i class="fa-solid fa-plus"></i> Adaugă Șofer
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filter-bar">
-                    <div class="search-input-wrapper">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-drivers" class="search-input" placeholder="Caută șofer după nume sau telefon...">
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Nume Complet</th>
-                                <th>Categorii permis</th>
-                                <th>Telefon</th>
-                                <th>Dată Expirare Permis</th>
-                                <th>Mașină Alocată</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="drivers-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: MANAGEMENT SERVICE -->
-            <section id="service" class="tab-content">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Management Service</h2>
-                        <p>Urmăriți reviziile, reparațiile și costurile de întreținere.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-service')">
-                            <i class="fa-solid fa-plus"></i> Înregistrează Service
-                        </button>
-                    </div>
-                    <div class="header-actions doar-client">
-                        <button class="btn btn-danger" onclick="openModal('modal-report-issue')">
-                            <i class="fa-solid fa-circle-exclamation"></i> Raportează o Defecțiune
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filter-bar">
-                    <div class="search-input-wrapper">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-service" class="search-input" placeholder="Caută după mașină sau descriere...">
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Mașină</th>
-                                <th>Dată Intrare</th>
-                                <th>Descriere Defecțiune / Revizie</th>
-                                <th>Cost (Lei)</th>
-                                <th>Stadiu</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="service-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: ASIGURĂRI -->
-            <section id="insurances" class="tab-content">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Evidență Asigurări</h2>
-                        <p>Monitorizați valabilitatea polițelor RCA și CASCO pentru tot parcul auto.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-insurance')">
-                            <i class="fa-solid fa-plus"></i> Adaugă Poliță RCA/CASCO
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Mașină</th>
-                                <th>Tip Poliță</th>
-                                <th>Companie Asigurător</th>
-                                <th>Cost Poliță (Lei)</th>
-                                <th>Dată Start</th>
-                                <th>Dată Expirare</th>
-                                <th>Stare</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="insurances-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: VINIETE -->
-            <section id="vignettes" class="tab-content">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Gestiune Viniete de Drum</h2>
-                        <p>Asigurați-vă că vehiculele au taxele de drum achitate la zi.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-vignette')">
-                            <i class="fa-solid fa-plus"></i> Adaugă Vinietă
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Mașină</th>
-                                <th>Țară</th>
-                                <th>Valabilitate</th>
-                                <th>Dată Început</th>
-                                <th>Dată Expirare</th>
-                                <th>Cost (Lei)</th>
-                                <th>Stare</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="vignettes-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- SECȚIUNE: ANVELOPE -->
-            <section id="tires" class="tab-content">
-                <div class="content-header">
-                    <div class="header-title">
-                        <h2>Management Anvelope</h2>
-                        <p>Monitorizați seturile de anvelope, starea de uzură și locația lor.</p>
-                    </div>
-                    <div class="header-actions doar-admin">
-                        <button class="btn btn-primary" onclick="openModal('modal-tires')">
-                            <i class="fa-solid fa-plus"></i> Adaugă Anvelope
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="responsive-table">
-                        <thead>
-                            <tr>
-                                <th>Mașină</th>
-                                <th>Sezon</th>
-                                <th>Dimensiuni Set</th>
-                                <th>Marcă Producător</th>
-                                <th>Grad Uzură</th>
-                                <th>Locație Stocare</th>
-                                <th style="text-align: right;">Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tires-table-body">
-                            <!-- Populat din JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
+  <header>
+    <div class="nav-inner">
+      <a class="brand" href="#dashboard">
+        <span>Fleet</span>ly
+      </a>
+      <nav>
+        <a href="index.html">Acasă</a>
+        <a href="servicii.html">Servicii</a>
+        <a href="flota.html">Flotă</a>
+        <a href="avantaje.html">Avantaje</a>
+        <a href="noutati.html">Noutăți</a>
+        <a href="taskuri.html">Taskuri</a>
+        <a href="adminpanellogpage.html">Portal</a>
+      </nav>
+      <a class="btn-primary" href="#contact">Cere ofertă</a>
     </div>
+  </header>
 
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ MAȘINĂ -->
-    <div id="modal-car" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-car-title">Adaugă Mașină</h3>
-                <button class="modal-close" onclick="closeModal('modal-car')">&times;</button>
-            </div>
-            <form id="form-car" onsubmit="saveCar(event)">
-                <input type="hidden" id="car-id">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="car-plate">Număr Înmatriculare</label>
-                        <input type="text" id="car-plate" class="form-control" placeholder="ex: B 123 ABC" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="car-brand">Marcă</label>
-                            <input type="text" id="car-brand" class="form-control" placeholder="ex: Dacia" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="car-model">Model</label>
-                            <input type="text" id="car-model" class="form-control" placeholder="ex: Logan" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="car-year">An Fabricație</label>
-                            <input type="number" id="car-year" class="form-control" placeholder="ex: 2021" min="1990" max="2027" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="car-fuel">Tip Combustibil</label>
-                            <select id="car-fuel" class="form-control" required>
-                                <option value="Benzină">Benzină</option>
-                                <option value="Motorină">Motorină</option>
-                                <option value="Benzină/GPL">Benzină/GPL</option>
-                                <option value="Hibrid">Hibrid</option>
-                                <option value="Electric">Electric</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="car-status">Status Inițial</label>
-                        <select id="car-status" class="form-control" required>
-                            <option value="Activ">Activ</option>
-                            <option value="În Service">În Service</option>
-                            <option value="Inactiv">Inactiv</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-car')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Salvează Mașină</button>
-                </div>
-            </form>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="section-title"><span></span><span>Fleetly</span></p>
+          <h1>Soluția modernă pentru gestionarea parcului auto.</h1>
+          <p>Platformă intuitivă pentru mașini, șoferi, service și documente cu notificări automate și rapoarte clare.</p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="servicii.html">Servicii</a>
+            <a href="flota.html" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.95rem 1.4rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); color: var(--text); text-decoration: none;">Flotă</a>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card"><strong>120+</strong><p>Vehicule gestionate</p></div>
+            <div class="stat-card"><strong>4</strong><p>Șoferi activi</p></div>
+            <div class="stat-card"><strong>1</strong><p>Vehicul în service</p></div>
+            <div class="stat-card"><strong>5</strong><p>Alerte active</p></div>
+          </div>
         </div>
-    </div>
 
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ ȘOFER -->
-    <div id="modal-driver" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-driver-title">Adaugă Șofer</h3>
-                <button class="modal-close" onclick="closeModal('modal-driver')">&times;</button>
+        <div class="hero-visual">
+          <div class="panel"></div>
+          <img class="hero-image" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80" alt="Management flotă auto" />
+          <div class="hero-flags">
+            <div class="hero-card">
+              <span>Dashboard</span>
+              <h3>Privire rapidă</h3>
+              <p>Ai sub control tot ce ține de parcul auto și alertele de expirare.</p>
             </div>
-            <form id="form-driver" onsubmit="saveDriver(event)">
-                <input type="hidden" id="driver-id">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="driver-name">Nume Complet</label>
-                        <input type="text" id="driver-name" class="form-control" placeholder="ex: Andrei Popa" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="driver-license">Categorii Permis</label>
-                            <input type="text" id="driver-license" class="form-control" placeholder="ex: B, C" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="driver-phone">Telefon</label>
-                            <input type="tel" id="driver-phone" class="form-control" placeholder="ex: 0722000000" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="driver-expiry">Valabilitate Permis (Dată expirare)</label>
-                        <input type="date" id="driver-expiry" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="driver-car">Mașină Alocată</label>
-                        <select id="driver-car" class="form-control">
-                            <option value="">Fără mașină alocată</option>
-                            <!-- Populat din JS -->
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-driver')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Salvează Șofer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ SERVICE -->
-    <div id="modal-service" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-service-title">Înregistrează Service</h3>
-                <button class="modal-close" onclick="closeModal('modal-service')">&times;</button>
+            <div class="hero-card">
+              <span>Service</span>
+              <h3>Planificare service</h3>
+              <p>Programează revizii și urmărește cheltuielile eficiente.</p>
             </div>
-            <form id="form-service" onsubmit="saveService(event)">
-                <input type="hidden" id="service-id">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="service-car">Selectează Mașină</label>
-                            <select id="service-car" class="form-control" required>
-                                <!-- Populat din JS -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="service-date">Dată Intrare</label>
-                            <input type="date" id="service-date" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="service-desc">Descriere Intervenție</label>
-                        <textarea id="service-desc" class="form-control" rows="3" placeholder="Descrieți defecțiunea sau ce s-a schimbat..." required></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="service-cost">Cost Intervenție (Lei)</label>
-                            <input type="number" id="service-cost" class="form-control" min="0" placeholder="ex: 350" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="service-status">Stadiu</label>
-                            <select id="service-status" class="form-control" required>
-                                <option value="În curs">În curs</option>
-                                <option value="Finalizat">Finalizat</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-service')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Înregistrează</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: RAPORTEAZĂ DEFECȚIUNE (CLIENT) -->
-    <div id="modal-report-issue" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Raportează o Defecțiune</h3>
-                <button class="modal-close" onclick="closeModal('modal-report-issue')">&times;</button>
+            <div class="hero-card">
+              <span>Asigurări</span>
+              <h3>Notificări critice</h3>
+              <p>Primești alerte când polițele sau documentele expiră.</p>
             </div>
-            <form id="form-report-issue" onsubmit="reportIssue(event)">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="report-date">Dată Sesizare</label>
-                        <input type="date" id="report-date" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="report-desc">Descrierea Defecțiunii</label>
-                        <textarea id="report-desc" class="form-control" rows="4" placeholder="Vă rugăm să detaliați defecțiunea observată (ex: zgomot la frânare, martor motor aprins)..." required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-report-issue')">Anulează</button>
-                    <button type="submit" class="btn btn-danger">Trimite Sesizarea</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ ASIGURARE -->
-    <div id="modal-insurance" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-insurance-title">Adaugă Poliță</h3>
-                <button class="modal-close" onclick="closeModal('modal-insurance')">&times;</button>
+            <div class="hero-card">
+              <span>Rapoarte</span>
+              <h3>Costuri clare</h3>
+              <p>Monitorizezi consumul și performanța mașinilor cu ușurință.</p>
             </div>
-            <form id="form-insurance" onsubmit="saveInsurance(event)">
-                <input type="hidden" id="insurance-id">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-car">Selectează Mașină</label>
-                            <select id="insurance-car" class="form-control" required>
-                                <!-- Populat din JS -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-type">Tip Poliță</label>
-                            <select id="insurance-type" class="form-control" required>
-                                <option value="RCA">RCA</option>
-                                <option value="CASCO">CASCO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-company">Companie Asigurător</label>
-                            <input type="text" id="insurance-company" class="form-control" placeholder="ex: Allianz, Groupama" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-cost">Cost Poliță (Lei)</label>
-                            <input type="number" id="insurance-cost" class="form-control" min="0" placeholder="ex: 1200" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-start">Dată Start</label>
-                            <input type="date" id="insurance-start" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="insurance-expiry">Dată Expirare</label>
-                            <input type="date" id="insurance-expiry" class="form-control" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-insurance')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Salvează Poliță</button>
-                </div>
-            </form>
+          </div>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ VINIETĂ -->
-    <div id="modal-vignette" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-vignette-title">Adaugă Vinietă</h3>
-                <button class="modal-close" onclick="closeModal('modal-vignette')">&times;</button>
-            </div>
-            <form id="form-vignette" onsubmit="saveVignette(event)">
-                <input type="hidden" id="vignette-id">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-car">Selectează Mașină</label>
-                            <select id="vignette-car" class="form-control" required>
-                                <!-- Populat din JS -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-country">Țară</label>
-                            <input type="text" id="vignette-country" class="form-control" placeholder="ex: România, Ungaria" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-duration">Durată / Tip</label>
-                            <select id="vignette-duration" class="form-control" required>
-                                <option value="7 Zile">7 Zile</option>
-                                <option value="10 Zile">10 Zile</option>
-                                <option value="30 Zile">30 Zile</option>
-                                <option value="90 Zile">90 Zile</option>
-                                <option value="1 An">1 An</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-cost">Cost Vinietă (Lei)</label>
-                            <input type="number" id="vignette-cost" class="form-control" min="0" placeholder="ex: 140" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-start">Dată Start</label>
-                            <input type="date" id="vignette-start" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="vignette-expiry">Dată Expirare</label>
-                            <input type="date" id="vignette-expiry" class="form-control" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-vignette')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Salvează Vinietă</button>
-                </div>
-            </form>
+    <section id="cautare">
+      <div class="section-title"><span></span><h2>Caută vehiculul potrivit</h2></div>
+      <div class="quick-search-panel">
+        <form id="search-form">
+          <div class="search-grid">
+            <input class="search-input" type="date" id="start-date" name="start-date" required />
+            <input class="search-input" type="date" id="end-date" name="end-date" required />
+            <select class="search-select" id="category" name="category">
+              <option value="">Categorie</option>
+              <option value="Economică">Economică</option>
+              <option value="Standard">Standard</option>
+              <option value="SUV">SUV</option>
+              <option value="Premium">Premium</option>
+            </select>
+            <button class="btn-primary" type="submit">Caută disponibilitate</button>
+          </div>
+        </form>
+        <div class="search-results" id="search-results">Selectează un interval și categorie pentru a vedea mașinile disponibile.</div>
+        <div class="pill-list">
+          <span>Autoturisme</span>
+          <span>Autoutilitare</span>
+          <span>SUV</span>
+          <span>Electric</span>
+          <span>Premium</span>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- MODAL: ADAUGĂ / EDITEAZĂ ANVELOPE -->
-    <div id="modal-tires" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-tires-title">Adaugă Set Anvelope</h3>
-                <button class="modal-close" onclick="closeModal('modal-tires')">&times;</button>
-            </div>
-            <form id="form-tires" onsubmit="saveTires(event)">
-                <input type="hidden" id="tires-id">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="tires-car">Selectează Mașină</label>
-                            <select id="tires-car" class="form-control" required>
-                                <!-- Populat din JS -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tires-season">Sezon</label>
-                            <select id="tires-season" class="form-control" required>
-                                <option value="Vară">Vară</option>
-                                <option value="Iarnă">Iarnă</option>
-                                <option value="All-Season">All-Season</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="tires-size">Dimensiuni Set</label>
-                            <input type="text" id="tires-size" class="form-control" placeholder="ex: 205/55 R16" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tires-brand">Marcă</label>
-                            <input type="text" id="tires-brand" class="form-control" placeholder="ex: Continental" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="tires-state">Grad Uzură</label>
-                            <select id="tires-state" class="form-control" required>
-                                <option value="Nou">Nou</option>
-                                <option value="Excelent">Excelent</option>
-                                <option value="Bun">Bun</option>
-                                <option value="Uzat">Uzat</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tires-location">Locație Stocare</label>
-                            <select id="tires-location" class="form-control" required>
-                                <option value="Pe mașină">Pe mașină</option>
-                                <option value="Depozit">Depozit</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-tires')">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Salvează Set</button>
-                </div>
-            </form>
+    <section id="pages">
+      <div class="section-title"><span></span><h2>Pagini dedicate</h2></div>
+      <div class="cards-grid">
+        <div class="card">
+          <img class="page-card-img" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80" alt="Servicii service auto" />
+          <h3>Servicii</h3>
+          <p>Gestionarea serviciilor flotei, documente și intervenții tehnice.</p>
+          <a class="btn-primary" href="servicii.html">Vezi pagina Servicii</a>
         </div>
-    </div>
+        <div class="card">
+          <img class="page-card-img" src="https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=900&q=80" alt="Flotă vehicule" />
+          <h3>Flotă</h3>
+          <p>Catalogul de vehicule și filtre pentru gestionarea parcului auto.</p>
+          <a class="btn-primary" href="flota.html">Vezi pagina Flotă</a>
+        </div>
+        <div class="card">
+          <img class="page-card-img" src="https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=900&q=80" alt="Avantaje sistem" />
+          <h3>Avantaje</h3>
+          <p>Beneficii și rezultate pe care le oferă platforma Fleetly.</p>
+          <a class="btn-primary" href="avantaje.html">Vezi pagina Avantaje</a>
+        </div>
+        <div class="card">
+          <img class="page-card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=80" alt="Noutăți flota" />
+          <h3>Noutăți</h3>
+          <p>Actualizări, oferte și informații utile pentru flota ta.</p>
+          <a class="btn-primary" href="noutati.html">Vezi pagina Noutăți</a>
+        </div>
+      </div>
+    </section>
 
-    <!-- Scripts -->
-    <script src="mockData.js"></script>
-    <script src="app.js"></script>
+    <section class="cta-banner" id="contact">
+      <div>
+        <h3>Începe acum gestionarea flotei tale</h3>
+        <p>Folosește Fleetly pentru o administrare mai eficientă și un parc auto mai transparent.</p>
+      </div>
+      <a href="mailto:office@smartfleet.ro">Trimite cerere</a>
+    </section>
+
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Fleetly</div>
+          <p>Soluții de management auto pentru firme moderne. Simplu, sigur și transparent.</p>
+          <p class="footer-meta">© 2026 Fleetly — Toate drepturile rezervate</p>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <p>București, România</p>
+          <p>office@smartfleet.ro</p>
+          <p>+40 745 123 456</p>
+        </div>
+        <div>
+          <h3>Linkuri utile</h3>
+          <a href="index.html">Acasă</a><br />
+          <a href="servicii.html">Servicii</a><br />
+          <a href="flota.html">Flotă</a><br />
+          <a href="avantaje.html">Avantaje</a><br />
+          <a href="noutati.html">Noutăți</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab-button');
+    const content = document.getElementById('tab-content');
+    const tabData = {
+      standard: {
+        title: 'Autoturisme',
+        text: 'Flotă ideală pentru echipe de vânzări, consultanță sau logistică urbană. Monitorizăm consumul, traseele și comportamentul de condus pentru performanță maximă.'
+      },
+      light: {
+        title: 'Autoutilitare',
+        text: 'Vehiculele utilitare sunt urmărite pentru utilizare eficientă, întreținere preventivă și gestionarea încărcăturii în timp real.'
+      },
+      heavy: {
+        title: 'Camioane',
+        text: 'Control complet pentru flote grele, rute de transport și siguranță, cu rapoarte dedicate pentru costurile de combustibil și tonaj.'
+      }
+    };
+
+    const searchForm = document.getElementById('search-form');
+    const searchResults = document.getElementById('search-results');
+
+    tabs.forEach(button => {
+      button.addEventListener('click', () => {
+        tabs.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        const item = tabData[button.dataset.tab];
+        content.innerHTML = `<h3>${item.title}</h3><p>${item.text}</p>`;
+      });
+    });
+
+    searchForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+      const category = document.getElementById('category').value;
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(now.getDate() + 1);
+      const minStart = tomorrow.toISOString().slice(0, 10);
+
+      if (!startDate || !endDate) {
+        searchResults.textContent = 'Te rugăm să completezi atât data de început, cât și data de sfârșit.';
+        return;
+      }
+
+      if (startDate < minStart) {
+        searchResults.textContent = 'Data de început trebuie să fie cel puțin ziua de mâine.';
+        return;
+      }
+
+      if (endDate <= startDate) {
+        searchResults.textContent = 'Data de sfârșit trebuie să fie după data de început.';
+        return;
+      }
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      if (days > 30) {
+        searchResults.textContent = 'Durata maximă a unei rezervări este de 30 de zile.';
+        return;
+      }
+
+      const categoryLabel = category ? `Categorie: ${category}. ` : '';
+      searchResults.innerHTML = `Am găsit 5 vehicule disponibile. ${categoryLabel}Interval: ${startDate} – ${endDate} (${days} zile).`;
+    });
+  </script>
 </body>
 </html>

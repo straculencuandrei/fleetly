@@ -33,6 +33,38 @@ export default {
       return corsPreflightResponse();
     }
 
+    if (url.pathname === '/api/cars/register' && request.method === 'POST') {
+      return handleRegisterCar(request, env, ctx);
+    }
+
+    if (url.pathname === '/api/cars/register' && request.method === 'OPTIONS') {
+      return corsPreflightResponse();
+    }
+
+    // GET /api/cars/all - fetch all cars for the admin panel
+    if (url.pathname === '/api/cars/all' && request.method === 'GET') {
+      return handleGetAllCars(request, env, ctx);
+    }
+    if (url.pathname === '/api/cars/all' && request.method === 'OPTIONS') {
+      return corsPreflightResponse();
+    }
+
+    // POST /api/cars/delete - delete a car by id
+    if (url.pathname === '/api/cars/delete' && request.method === 'POST') {
+      return handleDeleteCar(request, env, ctx);
+    }
+    if (url.pathname === '/api/cars/delete' && request.method === 'OPTIONS') {
+      return corsPreflightResponse();
+    }
+
+    // POST /api/cars/update - update a car's data/status
+    if (url.pathname === '/api/cars/update' && request.method === 'POST') {
+      return handleUpdateCar(request, env, ctx);
+    }
+    if (url.pathname === '/api/cars/update' && request.method === 'OPTIONS') {
+      return corsPreflightResponse();
+    }
+
     // Everything else → serve static assets (HTML, CSS, JS, images)
     return env.ASSETS.fetch(request);
   }
@@ -218,6 +250,207 @@ async function handleGetPublicCars(request, env, ctx) {
   }
 }
 
+
+// ─────────────────────────────────────────────
+// POST /api/cars/register
+// Body: { plateNumber, brand, model, year, fuelType, driverId }
+// ─────────────────────────────────────────────
+async function handleRegisterCar(request, env, ctx) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
+  }
+
+  const { plateNumber, brand, model, year, fuelType, driverId, status } = body ?? {};
+
+  if (!plateNumber || !brand || !model || !year || !fuelType) {
+    return jsonResponse({ success: false, error: 'Toate campurile sunt obligatorii (numar inmatriculare, marca, model, an, combustibil)' }, 400);
+  }
+
+  const client = new Client({
+    connectionString: env.HYPERDRIVE.connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  try {
+    await client.connect();
+
+    // Check if plate number already exists
+    const checkPlate = await client.query(
+      `SELECT id FROM public.masini WHERE nr_inmatriculare = $1 LIMIT 1`,
+      [plateNumber.trim().toUpperCase()]
+    );
+
+    if (checkPlate.rows.length > 0) {
+      await client.end();
+      return jsonResponse({ success: false, error: 'O masina cu acest numar de inmatriculare este deja inregistrata' }, 400);
+    }
+
+    const carId = 'c_' + Math.random().toString(36).substring(2, 11);
+
+    // Insert new car
+    await client.query(
+      `INSERT INTO public.masini (id, nr_inmatriculare, marca, model, an_fabricatie, tip_combustibil, status, listat_pe_site)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [carId, plateNumber.trim().toUpperCase(), brand.trim(), model.trim(), Number(year), fuelType, status || 'Activ', true]
+    );
+
+    // Link car to the driver/client if driverId is provided
+    if (driverId) {
+      await client.query(
+        `UPDATE public.soferi SET masina_alocata_id = $1 WHERE id = $2`,
+        [carId, driverId]
+      );
+    }
+
+    ctx.waitUntil(client.end());
+
+    return jsonResponse({
+      success: true,
+      message: 'Masina a fost inregistrata cu succes in baza de date!',
+      car: {
+        id: carId,
+        plateNumber: plateNumber.trim().toUpperCase(),
+        brand: brand.trim(),
+        model: model.trim(),
+        year: Number(year),
+        fuelType,
+        status: 'Activ'
+      }
+    });
+
+  } catch (err) {
+    console.error('DB error during car registration:', err.message);
+    ctx.waitUntil(client.end().catch(() => { }));
+    return jsonResponse({ success: false, error: 'Eroare baza de date: ' + err.message }, 500);
+  }
+}
+
+// ─────────────────────────────────────────────
+// GET /api/cars/all
+// Returns all cars (id, plate, brand, model, year, fuel, status)
+// ─────────────────────────────────────────────
+async function handleGetAllCars(request, env, ctx) {
+  const client = new Client({
+    connectionString: env.HYPERDRIVE.connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  try {
+    await client.connect();
+    const result = await client.query(
+      `SELECT id, nr_inmatriculare, marca, model, an_fabricatie, tip_combustibil, status
+       FROM public.masini
+       ORDER BY id DESC`
+    );
+    ctx.waitUntil(client.end());
+
+    return jsonResponse(result.rows.map(row => ({
+      id: row.id,
+      plateNumber: row.nr_inmatriculare || '',
+      brand: row.marca,
+      model: row.model,
+      year: row.an_fabricatie,
+      fuelType: row.tip_combustibil,
+      status: row.status || 'Activ',
+    })));
+
+  } catch (err) {
+    console.error('DB error during getAllCars:', err.message);
+    ctx.waitUntil(client.end().catch(() => { }));
+    return jsonResponse({ error: 'Database error: ' + err.message }, 500);
+  }
+}
+
+
+// ─────────────────────────────────────────────
+// POST /api/cars/delete
+// Body: { id }
+// ─────────────────────────────────────────────
+async function handleDeleteCar(request, env, ctx) {
+  let body;
+  try { body = await request.json(); } catch {
+    return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
+  }
+
+  const { id } = body ?? {};
+  if (!id) return jsonResponse({ success: false, error: 'ID-ul masinii este obligatoriu' }, 400);
+
+  const client = new Client({
+    connectionString: env.HYPERDRIVE.connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  try {
+    await client.connect();
+    // Deconectam soferii asociati
+    await client.query(
+      `UPDATE public.soferi SET masina_alocata_id = NULL WHERE masina_alocata_id = $1`,
+      [id]
+    );
+    // Stergem masina
+    const result = await client.query(`DELETE FROM public.masini WHERE id = $1`, [id]);
+    ctx.waitUntil(client.end());
+
+    if (result.rowCount === 0) {
+      return jsonResponse({ success: false, error: 'Masina nu a fost gasita in baza de date' }, 404);
+    }
+    return jsonResponse({ success: true, message: 'Masina a fost stearsa cu succes' });
+
+  } catch (err) {
+    console.error('DB error during deleteCar:', err.message);
+    ctx.waitUntil(client.end().catch(() => { }));
+    return jsonResponse({ success: false, error: 'Eroare baza de date: ' + err.message }, 500);
+  }
+}
+
+
+// ─────────────────────────────────────────────
+// POST /api/cars/update
+// Body: { id, plateNumber, brand, model, year, fuelType, status }
+// ─────────────────────────────────────────────
+async function handleUpdateCar(request, env, ctx) {
+  let body;
+  try { body = await request.json(); } catch {
+    return jsonResponse({ success: false, error: 'Invalid JSON body' }, 400);
+  }
+
+  const { id, plateNumber, brand, model, year, fuelType, status } = body ?? {};
+  if (!id || !plateNumber || !brand || !model || !year || !fuelType) {
+    return jsonResponse({ success: false, error: 'Campuri obligatorii lipsa' }, 400);
+  }
+
+  const client = new Client({
+    connectionString: env.HYPERDRIVE.connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  try {
+    await client.connect();
+    const result = await client.query(
+      `UPDATE public.masini
+       SET nr_inmatriculare = $2, marca = $3, model = $4,
+           an_fabricatie = $5, tip_combustibil = $6, status = $7
+       WHERE id = $1`,
+      [id, plateNumber.trim().toUpperCase(), brand.trim(), model.trim(), Number(year), fuelType, status || 'Activ']
+    );
+    ctx.waitUntil(client.end());
+
+    if (result.rowCount === 0) {
+      return jsonResponse({ success: false, error: 'Masina nu a fost gasita in baza de date' }, 404);
+    }
+    return jsonResponse({ success: true, message: 'Masina a fost actualizata cu succes' });
+
+  } catch (err) {
+    console.error('DB error during updateCar:', err.message);
+    ctx.waitUntil(client.end().catch(() => { }));
+    return jsonResponse({ success: false, error: 'Eroare baza de date: ' + err.message }, 500);
+  }
+}
+
+
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
@@ -236,7 +469,7 @@ function corsPreflightResponse() {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },
   });

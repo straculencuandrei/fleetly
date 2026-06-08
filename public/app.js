@@ -9,7 +9,7 @@ if (statusLogat !== 'da') {
 }
 // Rulăm funcțiile când documentul s-a încărcat complet
 document.addEventListener("DOMContentLoaded", () => {
-    initApp();
+    initApp().catch(err => console.error('App init error:', err));
 });
 
 // Starea curentă a aplicației (încarcă din localStorage)
@@ -46,12 +46,29 @@ function saveState() {
 }
 
 // Inițializare aplicație
-function initApp() {
+async function initApp() {
     setupNavigation();
+    await loadCarsFromDB();
     updateDashboard();
     populateTables();
     setupFilters();
     populateSelectDropdowns();
+}
+
+// Încarcă mașinile din PostgreSQL la pornire (suprascrie cache-ul local)
+async function loadCarsFromDB() {
+    try {
+        const res = await fetch('/api/cars/all');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+            state.cars = data;
+            localStorage.setItem('fleet_cars', JSON.stringify(data));
+        }
+    } catch (err) {
+        console.warn('Nu s-au putut incarca masinile din DB, se folosesc datele locale:', err);
+        // Fallback: state.cars a fost deja initializat din localStorage
+    }
 }
 
 // ----------------------------------------------------
@@ -639,8 +656,8 @@ function closeModal(modalId) {
     }
 }
 
-// A. Salvare Mașină (Adăugare / Editare)
-function saveCar(e) {
+// A. Salvare Mașină (Adăugare / Editare) — scrie direct în baza de date
+async function saveCar(e) {
     e.preventDefault();
     const id = document.getElementById("car-id").value;
     const plate = document.getElementById("car-plate").value.trim().toUpperCase();
@@ -650,28 +667,132 @@ function saveCar(e) {
     const fuel = document.getElementById("car-fuel").value;
     const status = document.getElementById("car-status").value;
 
-    if (id) {
-        // Editare
-        const idx = state.cars.findIndex(c => c.id === id);
-        if (idx !== -1) {
-            state.cars[idx] = { id, plateNumber: plate, brand, model, year, fuelType: fuel, status };
-        }
-    } else {
-        // Adăugare
-        state.cars.push({
-            id: generateId(),
-            plateNumber: plate,
-            brand,
-            model,
-            year,
-            fuelType: fuel,
-            status
-        });
-    }
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Se salvează...'; }
 
-    saveState();
-    populateSelectDropdowns();
-    closeModal("modal-car");
+    try {
+        if (id) {
+            // EDITARE — trimite la /api/cars/update
+            const res = await fetch('/api/cars/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, plateNumber: plate, brand, model, year, fuelType: fuel, status })
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert('Eroare: ' + (data.error || 'Nu s-a putut actualiza mașina.'));
+                return;
+            }
+            // Actualizăm starea locală
+            const idx = state.cars.findIndex(c => c.id === id);
+            if (idx !== -1) {
+                state.cars[idx] = { id, plateNumber: plate, brand, model, year, fuelType: fuel, status };
+            }
+        } else {
+            // ADĂUGARE — trimite la /api/cars/register
+            const res = await fetch('/api/cars/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plateNumber: plate, brand, model, year, fuelType: fuel, status })
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert('Eroare: ' + (data.error || 'Nu s-a putut adăuga mașina.'));
+                return;
+            }
+            // Adăugăm în starea locală cu ID-ul din DB
+            state.cars.push({
+                id: data.car.id,
+                plateNumber: data.car.plateNumber,
+                brand: data.car.brand,
+                model: data.car.model,
+                year: data.car.year,
+                fuelType: data.car.fuelType,
+                status: data.car.status
+            });
+        }
+
+        saveState();
+        populateSelectDropdowns();
+        closeModal("modal-car");
+
+    } catch (err) {
+        console.error('Eroare la salvarea mașinii:', err);
+        alert('Eroare de rețea. Verificați conexiunea.');
+    } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+    }
+}
+
+async function saveCarClient(e) {
+    e.preventDefault();
+    const plateNumber = document.getElementById("car-client-plate").value.trim().toUpperCase();
+    const brand = document.getElementById("car-client-brand").value.trim();
+    const model = document.getElementById("car-client-model").value.trim();
+    const year = Number(document.getElementById("car-client-year").value);
+    const fuelType = document.getElementById("car-client-fuel").value;
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Se înregistrează...';
+
+    try {
+        const response = await fetch('/api/cars/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plateNumber, brand, model, year, fuelType, driverId: driverIdUtilizator })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Adaugă și în state-ul local pentru actualizarea UI-ului
+            state.cars.push({
+                id: data.car.id,
+                plateNumber: data.car.plateNumber,
+                brand: data.car.brand,
+                model: data.car.model,
+                year: data.car.year,
+                fuelType: data.car.fuelType,
+                status: data.car.status
+            });
+
+            // Asociază mașina local cu șoferul client în starea aplicației
+            if (driverIdUtilizator) {
+                const driver = state.drivers.find(d => d.id === driverIdUtilizator);
+                if (driver) {
+                    driver.assignedCarId = data.car.id;
+                } else {
+                    // Dacă șoferul local nu există în cache-ul local, îl creăm
+                    state.drivers.push({
+                        id: driverIdUtilizator,
+                        name: localStorage.getItem('regFullName') || 'Utilizator Client',
+                        licenseCategory: 'B',
+                        phone: '',
+                        licenseExpiry: new Date(Date.now() + 365 * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                        assignedCarId: data.car.id
+                    });
+                }
+                clientCarId = data.car.id;
+            }
+
+            saveState();
+            populateSelectDropdowns();
+            closeModal("modal-car-client");
+            alert("Mașina a fost înregistrată cu succes în baza de date și alocată contului tău!");
+            window.location.reload(); // Reîncărcare pentru reîmprospătare completă a tab-urilor filtrate
+        } else {
+            alert("Eroare: " + (data.error || "Nu s-a putut înregistra mașina."));
+        }
+    } catch (err) {
+        console.error("Failed to register car:", err);
+        alert("Eroare de rețea. Verificați conexiunea.");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
 }
 
 function editCar(id) {
@@ -690,17 +811,32 @@ function editCar(id) {
     openModal("modal-car");
 }
 
-function deleteCar(id) {
-    if (confirm("Sigur doriți să ștergeți această mașină? Toate asocierile vor fi afectate.")) {
+async function deleteCar(id) {
+    if (!confirm("Sigur doriți să ștergeți această mașină? Toate asocierile vor fi afectate.")) return;
+
+    try {
+        const res = await fetch('/api/cars/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (!data.success) {
+            alert('Eroare: ' + (data.error || 'Nu s-a putut șterge mașina.'));
+            return;
+        }
+        // Actualizăm starea locală
         state.cars = state.cars.filter(c => c.id !== id);
-        
         // Deconectăm șoferii asociați cu această mașină
         state.drivers.forEach(d => {
             if (d.assignedCarId === id) d.assignedCarId = "";
         });
-
         saveState();
         populateSelectDropdowns();
+
+    } catch (err) {
+        console.error('Eroare la ștergerea mașinii:', err);
+        alert('Eroare de rețea. Verificați conexiunea.');
     }
 }
 

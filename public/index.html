@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleetly Dealership - Parcul tău auto de încredere</title>
+  
+  <!-- FontAwesome pentru iconițe metalice premium -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stilurile premium unificate -->
+  <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header>
+    <div class="nav-container">
+      <a class="brand" href="index.html">
+        <i class="fa-solid fa-car-side" style="color: var(--text-primary); margin-right: 8px;"></i><span>Fleetly</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="active">Acasă</a></li>
+        <li><a href="flota.html">Flotă</a></li>
+        <li><a href="servicii.html">Servicii</a></li>
+        <li><a href="avantaje.html">Avantaje</a></li>
+        <li><a href="noutati.html">Noutăți</a></li>
+        <li><a href="login.html">Portal</a></li>
+      </ul>
+      <a class="btn btn-primary" href="#cautare">Caută Mașină</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-bg-accent"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <p class="hero-tagline">Exclusivitate &amp; Calitate Certificată</p>
+        <h1 class="hero-title">
+          Descoperă 
+          <span>Parcul Auto Premium</span>
+          Definit de Excelență.
+        </h1>
+        <p class="hero-description">
+          Alege dintr-o selecție riguros inspectată de autoturisme de lux, SUV-uri elegante și mașini sport de înaltă performanță. Oferim garanție completă, istoric 100% verificat și soluții flexibile de creditare sau leasing.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#cautare">Vizualizează Flota</a>
+          <a class="btn btn-secondary" href="servicii.html">Serviciile Noastre</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h3 id="stat-cars">150+</h3>
+            <p>Mașini în Stoc</p>
+          </div>
+          <div class="stat-item">
+            <h3 id="stat-checked">100%</h3>
+            <p>Verificate Tehnic</p>
+          </div>
+          <div class="stat-item">
+            <h3 id="stat-warranty">12 luni</h3>
+            <p>Garanție Inclusă</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hero-visual">
+        <div class="hero-card-display">
+          <img class="hero-img" src="images/grey_sports_car.png" alt="Porsche 911 Carrera S pe fundal gri metalizat premium">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK SEARCH / FILTER BAR -->
+  <section class="filter-section" id="cautare">
+    <div class="filter-wrapper">
+      <div class="filter-header">
+        <h2>Găsește Autoturismul Perfect</h2>
+        <p>Filtrează selecția noastră de mașini în funcție de preferințele tale din metal, argint și lux.</p>
+      </div>
+      <div class="filter-grid">
+        <div class="form-group-filter">
+          <label for="filter-search"><i class="fa-solid fa-magnifying-glass"></i> Căutare marcă sau model</label>
+          <input type="text" id="filter-search" class="filter-input" placeholder="ex: Audi, Volvo, Porsche...">
+        </div>
+        <div class="form-group-filter">
+          <label for="filter-category"><i class="fa-solid fa-car"></i> Categorie</label>
+          <select id="filter-category" class="filter-input">
+            <option value="">Toate categoriile</option>
+            <option value="Sedan Premium">Sedan Premium</option>
+            <option value="SUV Luxury">SUV Luxury</option>
+            <option value="Sports Premium">Sports Premium</option>
+          </select>
+        </div>
+        <div class="form-group-filter">
+          <label for="filter-fuel"><i class="fa-solid fa-gas-pump"></i> Combustibil</label>
+          <select id="filter-fuel" class="filter-input">
+            <option value="">Toate tipurile</option>
+            <option value="Benzină">Benzină</option>
+            <option value="Plug-In Hybrid">Plug-In Hybrid</option>
+            <option value="Mild Hybrid">Mild Hybrid</option>
+          </select>
+        </div>
+        <div class="form-group-filter" style="justify-content: flex-end;">
+          <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%; height: 50px;">Aplica filtrele</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VEHICLES GRID -->
+  <section class="fleet-section">
+    <div class="section-intro">
+      <div class="section-title-wrapper">
+        <h2>Selecția Noastră Exclusivă</h2>
+        <p>Fiecare mașină este verificată în 150 de puncte și livrată într-o stare tehnică și estetică impecabilă.</p>
+      </div>
+      <div style="font-size: 0.9rem; color: var(--text-secondary);">
+        Afișare: <strong id="car-count">3</strong> din 3 autoturisme
+      </div>
+    </div>
+    
+    <div class="fleet-grid" id="fleet-container">
+      <!-- Vehicul 1 -->
+      <div class="car-card" data-brand="Audi A6 S-Line" data-category="Sedan Premium" data-fuel="Mild Hybrid">
+        <div class="car-img-wrapper">
+          <span class="car-badge available">Disponibil</span>
+          <img src="images/luxury_silver_sedan.png" alt="Audi A6 S-Line în nuanță argintie lucioasă">
+        </div>
+        <div class="car-content">
+          <div class="car-header">
+            <div>
+              <h3 class="car-title">Audi A6 S-Line</h3>
+              <span class="car-category">Sedan Premium</span>
+            </div>
+            <div class="car-price-block">
+              <span class="car-price">34.900 €</span>
+              <div class="car-price-period">TVA inclus</div>
+            </div>
+          </div>
+          <div class="car-specs">
+            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2022</div>
+            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 62.000 km</div>
+            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
+            <div class="spec-info"><i class="fa-solid fa-bolt"></i> Mild Hybrid</div>
+          </div>
+          <div class="car-footer">
+            <div class="car-financing">
+              Finanțare estimată:
+              <strong>de la 450 € / lună</strong>
+            </div>
+            <button class="btn btn-accent" onclick="showCarDetails('audi')">Detalii &amp; Test Drive</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicul 2 -->
+      <div class="car-card" data-brand="Volvo XC90 Recharge" data-category="SUV Luxury" data-fuel="Plug-In Hybrid">
+        <div class="car-img-wrapper">
+          <span class="car-badge available">Disponibil</span>
+          <img src="images/dark_metal_suv.png" alt="Volvo XC90 Recharge în nuanță metal închis mat">
+        </div>
+        <div class="car-content">
+          <div class="car-header">
+            <div>
+              <h3 class="car-title">Volvo XC90 Recharge</h3>
+              <span class="car-category">SUV Luxury</span>
+            </div>
+            <div class="car-price-block">
+              <span class="car-price">62.500 €</span>
+              <div class="car-price-period">TVA inclus</div>
+            </div>
+          </div>
+          <div class="car-specs">
+            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2023</div>
+            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 34.000 km</div>
+            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
+            <div class="spec-info"><i class="fa-solid fa-leaf"></i> Plug-In Hybrid</div>
+          </div>
+          <div class="car-footer">
+            <div class="car-financing">
+              Finanțare estimată:
+              <strong>de la 790 € / lună</strong>
+            </div>
+            <button class="btn btn-accent" onclick="showCarDetails('volvo')">Detalii &amp; Test Drive</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicul 3 -->
+      <div class="car-card" data-brand="Porsche 911 Carrera S" data-category="Sports Premium" data-fuel="Benzină">
+        <div class="car-img-wrapper">
+          <span class="car-badge available">Disponibil</span>
+          <img src="images/grey_sports_car.png" alt="Porsche 911 Carrera S finisat în gri carbon metalizat">
+        </div>
+        <div class="car-content">
+          <div class="car-header">
+            <div>
+              <h3 class="car-title">Porsche 911 Carrera S</h3>
+              <span class="car-category">Sports Premium</span>
+            </div>
+            <div class="car-price-block">
+              <span class="car-price">119.000 €</span>
+              <div class="car-price-period">TVA inclus</div>
+            </div>
+          </div>
+          <div class="car-specs">
+            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2021</div>
+            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 18.500 km</div>
+            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat (PDK)</div>
+            <div class="spec-info"><i class="fa-solid fa-fire-flame-simple"></i> Benzină</div>
+          </div>
+          <div class="car-footer">
+            <div class="car-financing">
+              Finanțare estimată:
+              <strong>de la 1.450 € / lună</strong>
+            </div>
+            <button class="btn btn-accent" onclick="showCarDetails('porsche')">Detalii &amp; Test Drive</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- No Results Alert -->
+      <div id="no-results" style="display: none; text-align: center; padding: 4rem 2rem; color: var(--text-secondary); grid-column: 1 / -1; background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 6px; width: 100%;">
+        <i class="fa-solid fa-car-burst" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block;"></i>
+        <h3 style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--text-primary); margin-bottom: 0.5rem;">Din păcate, mașina căutată nu există.</h3>
+        <p style="font-size: 0.95rem;">Încearcă să cauți alte cuvinte cheie sau resetează filtrele aplicate.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE US -->
+  <section class="advantages-section">
+    <div class="advantages-container">
+      <div class="filter-header">
+        <p class="hero-tagline" style="border: none; padding: 0; text-align: center; color: var(--text-secondary);">De ce Fleetly Dealership</p>
+        <h2 style="margin-top: 10px;">Avantajele Serviciilor Noastre Premium</h2>
+        <p>Suntem orientați spre transparență absolută și confort maxim pentru client.</p>
+      </div>
+      <div class="advantages-grid">
+        <div class="advantage-card">
+          <div class="advantage-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Garanție Reală 12 Luni</h3>
+          <p>Fiecare mașină din stocul nostru beneficiază de acoperire completă a motorului și a transmisiei, cu posibilitate de extindere până la 24 de luni.</p>
+        </div>
+        <div class="advantage-card">
+          <div class="advantage-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+          <h3>150+ Puncte de Inspectare</h3>
+          <p>Toate vehiculele trec printr-un diagnostic mecanic detaliat, testare rutieră și o recondiționare estetică completă înainte de a fi listate.</p>
+        </div>
+        <div class="advantage-card">
+          <div class="advantage-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+          <h3>Finanțare Rapidă în 1 Oră</h3>
+          <p>Colaborăm cu principalele bănci și firme de leasing din România pentru a-ți asigura cele mai mici dobânzi și aprobare instant pe loc.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: CAR DETAILS & INQUIRY -->
+  <div class="modal-overlay" id="car-modal">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeCarDetails()">&times;</button>
+      <div class="modal-grid">
+        <div class="modal-gallery">
+          <img id="modal-img" src="" alt="Mașină selectată">
+          <div class="modal-car-info">
+            <h3 class="modal-car-title" id="modal-title">Nume Mașină</h3>
+            <p class="modal-car-description" id="modal-desc">Descriere mașină și detalii suplimentare pentru client.</p>
+            <div class="modal-specs-list" id="modal-specs">
+              <!-- Specificații populate din Javascript -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-form-side">
+          <h3>Solicită Ofertă / Test Drive</h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Completează formularul de mai jos și un consultant te va contacta în maximum 15 minute pentru confirmare.</p>
+          <form class="modal-form" id="inquiry-form" onsubmit="submitInquiry(event)">
+            <input type="hidden" id="inquiry-car-name">
+            <div class="form-group-modal">
+              <label for="client-name">Nume Complet</label>
+              <input type="text" id="client-name" class="modal-input" placeholder="ex: Andrei Popescu" required>
+            </div>
+            <div class="form-group-modal">
+              <label for="client-phone">Număr Telefon</label>
+              <input type="tel" id="client-phone" class="modal-input" placeholder="ex: 0722 000 000" required>
+            </div>
+            <div class="form-group-modal">
+              <label for="client-email">Adresă Email</label>
+              <input type="email" id="client-email" class="modal-input" placeholder="ex: andrei.popescu@gmail.com" required>
+            </div>
+            <div class="form-group-modal">
+              <label for="inquiry-type">Tip Solicitare</label>
+              <select id="inquiry-type" class="modal-input" required>
+                <option value="test-drive">Programează Test Drive</option>
+                <option value="leasing">Solicită Ofertă Finanțare (Leasing/Credit)</option>
+                <option value="purchase">Rezervă Vehicul (Avans 500 €)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Trimite Solicitarea</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand-column">
+          <a class="brand" href="index.html">
+            <span>Fleet</span>ly
+          </a>
+          <p>Dealership auto autorizat cu accent pe mașini verificate, transparență totală și asistență de specialitate pentru cumpărători.</p>
+        </div>
+        <div class="footer-column">
+          <h3>Navigare</h3>
+          <ul class="footer-links">
+            <li><a href="index.html">Acasă</a></li>
+            <li><a href="flota.html">Flotă Auto</a></li>
+            <li><a href="servicii.html">Servicii Mentenanță</a></li>
+            <li><a href="avantaje.html">Avantaje</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Link-uri Utile</h3>
+          <ul class="footer-links">
+            <li><a href="noutati.html">Noutăți &amp; Blog</a></li>
+            <li><a href="login.html">Portal Clienți</a></li>
+            <li><a href="login.html">Autentificare Șoferi</a></li>
+            <li><a href="mailto:office@fleetly.ro">Asistență Client</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contact Dealership</h3>
+          <div class="footer-contact-info">
+            <span><i class="fa-solid fa-location-dot"></i> Șoseaua Pipera 42, București</span>
+            <span><i class="fa-solid fa-phone"></i> +40 745 123 456</span>
+            <span><i class="fa-solid fa-envelope"></i> office@fleetly.ro</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fleetly Dealership. Toate drepturile rezervate. Mașini certificate premium.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT PENTRU FILTRARE ȘI MODALE INTERACTIVE -->
+  <script>
+    // Baza de date statica pentru detalii mașini în modal
+    const carDatabase = {
+      audi: {
+        title: "Audi A6 S-Line 40 TDI mild-hybrid",
+        desc: "Audi A6 în echipare exclusivă S-Line combină performanța eficientă mild-hybrid cu eleganța designului exterior argintiu. Mașina este unică pe piață, cu un singur proprietar anterior, revizii efectuate complet doar în rețeaua oficială Audi și stare perfectă fără zgârieturi.",
+        img: "images/luxury_silver_sedan.png",
+        specs: {
+          "An Fabricație": "2022",
+          "Kilometraj": "62.000 km",
+          "Combustibil": "Diesel / Mild-Hybrid",
+          "Cai Putere": "204 CP",
+          "Transmisie": "Automată S-Tronic 7 trepte",
+          "Culoare": "Silver Metallic",
+          "Istoric revizii": "Complet (reprezentanță)",
+          "Garanție": "12 Luni incluse"
+        }
+      },
+      volvo: {
+        title: "Volvo XC90 Recharge T8 Plug-In Hybrid",
+        desc: "Cel mai sigur SUV din clasa sa, Volvo XC90 Recharge oferă putere fenomenală de 455 CP cu amprentă de carbon minimă datorită tehnologiei Plug-In Hybrid. Interiorul dispune de 7 locuri, finisaje premium din lemn suedez, scaune cu masaj din piele perforată și suspensie pneumatică activă.",
+        img: "images/dark_metal_suv.png",
+        specs: {
+          "An Fabricație": "2023",
+          "Kilometraj": "34.000 km",
+          "Combustibil": "Benzină / Plug-In Hybrid",
+          "Cai Putere": "455 CP",
+          "Transmisie": "Automată Geartronic 8 trepte",
+          "Capacitate": "7 Locuri",
+          "Autonomie EV": "Până la 68 km",
+          "Garanție": "12 Luni incluse"
+        }
+      },
+      porsche: {
+        title: "Porsche 911 Carrera S (992)",
+        desc: "Legendarul Porsche 911 în varianta Carrera S oferă dinamică pură și performanțe uluitoare pe șosea. Culoarea gri închis metalizat (Agate Grey) îi oferă o prezență discretă dar impozantă. Echipată cu evacuare sport activă, pachetul Sport Chrono și jante Carrera Exclusive Design.",
+        img: "images/grey_sports_car.png",
+        specs: {
+          "An Fabricație": "2021",
+          "Kilometraj": "18.500 km",
+          "Combustibil": "Benzină",
+          "Cai Putere": "450 CP",
+          "Transmisie": "Automată PDK 8 trepte",
+          "0-100 km/h": "3.7 secunde",
+          "Interior": "Piele neagră integrală",
+          "Garanție": "12 Luni Porsche Approved"
+        }
+      }
+    };
+
+    // Funcții pentru modale
+    function showCarDetails(key) {
+      const car = carDatabase[key];
+      if (!car) return;
+
+      document.getElementById('modal-title').innerText = car.title;
+      document.getElementById('modal-desc').innerText = car.desc;
+      document.getElementById('modal-img').src = car.img;
+      document.getElementById('inquiry-car-name').value = car.title;
+
+      // Generare specificații în listă
+      const specsContainer = document.getElementById('modal-specs');
+      specsContainer.innerHTML = '';
+      for (const [label, val] of Object.entries(car.specs)) {
+        const row = document.createElement('div');
+        row.className = 'modal-spec-row';
+        row.innerHTML = `<span>${label}</span><span>${val}</span>`;
+        specsContainer.appendChild(row);
+      }
+
+      // Deschiderea modalului cu animație
+      document.getElementById('car-modal').classList.add('active');
+    }
+
+    function closeCarDetails() {
+      document.getElementById('car-modal').classList.remove('active');
+    }
+
+    // Închiderea modalului la click în exterior
+    document.getElementById('car-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeCarDetails();
+      }
+    });
+
+    // Filtrare vehicule
+    function applyFilters() {
+      const searchVal = document.getElementById('filter-search').value.toLowerCase().trim();
+      const categoryVal = document.getElementById('filter-category').value;
+      const fuelVal = document.getElementById('filter-fuel').value;
+
+      const cards = document.querySelectorAll('.car-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cardBrand = card.getAttribute('data-brand').toLowerCase();
+        const cardCategory = card.getAttribute('data-category');
+        const cardFuel = card.getAttribute('data-fuel');
+
+        const matchesSearch = !searchVal || cardBrand.includes(searchVal);
+        const matchesCategory = !categoryVal || cardCategory === categoryVal;
+        const matchesFuel = !fuelVal || cardFuel === fuelVal;
+
+        if (matchesSearch && matchesCategory && matchesFuel) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('car-count').innerText = visibleCount;
+    }
+
+    // Trimitere solicitare de achiziție/test drive
+    function submitInquiry(e) {
+      e.preventDefault();
+      const carName = document.getElementById('inquiry-car-name').value;
+      const clientName = document.getElementById('client-name').value;
+      const type = document.getElementById('inquiry-type').value;
+
+      let typeLabel = "Programează Test Drive";
+      if (type === "leasing") typeLabel = "Solicită Ofertă Finanțare";
+      if (type === "purchase") typeLabel = "Rezervă Vehicul";
+
+      alert(`Stimate ${clientName},\n\nSolicitarea dumneavoastră pentru "${carName}" (${typeLabel}) a fost înregistrată cu succes în sistemul Fleetly Dealership.\n\nUn consultant vă va contacta telefonic în cel mai scurt timp pentru confirmare și detalii suplimentare.`);
+      
+      // Resetare formular și închidere modal
+      document.getElementById('inquiry-form').reset();
+      closeCarDetails();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleetly - Autentificare</title>
+    <style>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #0b111e; 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            color: white;
+        }
+        .login-box { 
+            background: #151f32; 
+            padding: 40px; 
+            border-radius: 12px; 
+            width: 320px; 
+            text-align: center; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); 
+            border: 1px solid #1f2d47;
+        }
+        .login-box h2 { 
+            margin-top: 0;
+            margin-bottom: 25px; 
+            color: #38bdf8; 
+            font-size: 26px;
+            font-weight: 600;
+        }
+        .login-box input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            box-sizing: border-box; 
+            background: #1f2d47; 
+            border: 1px solid #314363; 
+            color: white; 
+            border-radius: 6px; 
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .login-box input:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+        .login-box button { 
+            width: 100%; 
+            padding: 14px; 
+            background: #0284c7; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            margin-top: 15px; 
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .login-box button:hover { 
+            background: #0369a1; 
+        }
+        #mesajEroare {
+            color: #ef4444; 
+            display: none; 
+            margin-top: 15px;
+            font-size: 14px;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Demo Panel Styling */
+        .demo-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(21, 31, 50, 0.85);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid #1f2d47;
+            box-shadow: -8px 0 24px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(100%);
+            z-index: 1000;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            text-align: left;
+        }
+        .demo-panel.active {
+            transform: translateX(0);
+        }
+        .demo-panel h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #38bdf8;
+            font-size: 20px;
+            border-bottom: 1px solid #1f2d47;
+            padding-bottom: 10px;
+        }
+        .demo-accounts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+        .demo-account-card {
+            background: #1f2d47;
+            border: 1px solid #314363;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .demo-account-card:hover {
+            border-color: #38bdf8;
+            background: #243552;
+            transform: translateY(-2px);
+        }
+        .demo-account-role {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-bottom: 4px;
+        }
+        .demo-account-role.client {
+            color: #10b981;
+        }
+        .demo-account-user {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .demo-account-pass {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .demo-panel-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .demo-panel-close:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Fleetly Login</h2>
+        <form id="formLogin">
+            <input type="text" id="user" placeholder="Utilizator (admin sau client)" required autocomplete="off">
+            <input type="password" id="pass" placeholder="Parolă" required>
+            <button type="submit">Conectare</button>
+        </form>
+        <p id="mesajEroare">Utilizator sau parolă incorectă!</p>
+    </div>
+
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const userIntrodus = document.getElementById('user').value.trim();
+            const parolaIntrodusa = document.getElementById('pass').value;
+            const errorEl = document.getElementById('mesajEroare');
+            const submitBtn = document.querySelector('#formLogin button[type="submit"]');
+
+            errorEl.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Se conectează...';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userIntrodus, password: parolaIntrodusa })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Salvăm starea sesiunii în localStorage (persistentă)
+                    localStorage.setItem('statusLogat', 'da');
+                    localStorage.setItem('rolUtilizator', data.rol);
+                    if (data.driverId) {
+                        localStorage.setItem('driverIdUtilizator', data.driverId);
+                    } else {
+                        localStorage.removeItem('driverIdUtilizator');
+                    }
+
+                    // Token de sesiune în sessionStorage (există DOAR în tab-ul curent).
+                    sessionStorage.setItem('fleetly_session', data.rol + '_verified');
+
+                    // Trimitem utilizatorul direct în Dashboard
+                    if (data.rol === 'client') {
+                        window.location.href = 'clientpanel.html';
+                    } else {
+                        window.location.href = 'adminpanellogpage.html';
+                    }
+                } else {
+                    errorEl.textContent = data.error || 'Utilizator sau parolă incorectă!';
+                    errorEl.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Conectare';
+                }
+            } catch (err) {
+                errorEl.textContent = 'Eroare de rețea. Verificați conexiunea.';
+                errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Conectare';
+            }
+        });
+
+        // Funcții pentru Demo Panel (se activează doar pe localhost / 127.0.0.1)
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+        if (isLocalhost) {
+            // Generăm structura HTML dinamic pentru a nu fi expusă deloc în producție
+            const demoPanelHtml = `
+                <div id="demoPanel" class="demo-panel">
+                    <button class="demo-panel-close" onclick="toggleDemoPanel(false)">&times;</button>
+                    <h3>Conturi Demo (Local)</h3>
+                    <div class="demo-accounts-list">
+                        <div class="demo-account-card" onclick="selectDemoAccount('admin', 'admin123')">
+                            <div class="demo-account-role">Administrator</div>
+                            <div class="demo-account-user">admin</div>
+                            <div class="demo-account-pass">Parolă: admin123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('andrei', 'client123')">
+                            <div class="demo-account-role client">Client (Andrei)</div>
+                            <div class="demo-account-user">andrei</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('mihai', 'client123')">
+                            <div class="demo-account-role client">Client (Mihai)</div>
+                            <div class="demo-account-user">mihai</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('elena', 'client123')">
+                            <div class="demo-account-role client">Client (Elena)</div>
+                            <div class="demo-account-user">elena</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                        <div class="demo-account-card" onclick="selectDemoAccount('alexandru', 'client123')">
+                            <div class="demo-account-role client">Client (Alexandru)</div>
+                            <div class="demo-account-user">alexandru</div>
+                            <div class="demo-account-pass">Parolă: client123</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', demoPanelHtml);
+
+            // Înregistrează evenimentul tastaturii
+            window.addEventListener('keydown', function(e) {
+                // Comanda Ctrl + Alt + 5
+                if (e.ctrlKey && e.altKey && e.key === '5') {
+                    e.preventDefault();
+                    toggleDemoPanel();
+                }
+            });
+        }
+
+        function toggleDemoPanel(show) {
+            if (!isLocalhost) return;
+            const panel = document.getElementById('demoPanel');
+            if (panel) {
+                if (show !== undefined) {
+                    if (show) panel.classList.add('active');
+                    else panel.classList.remove('active');
+                } else {
+                    panel.classList.toggle('active');
+                }
+            }
+        }
+
+        function selectDemoAccount(username, password) {
+            if (!isLocalhost) return;
+            document.getElementById('user').value = username;
+            document.getElementById('pass').value = password;
+            toggleDemoPanel(false);
+        }
+    </script>
+</body>
+</html>

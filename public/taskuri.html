@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskuri Echipa | Fleetly Dealership</title>
+  
+  <!-- FontAwesome pentru iconițe premium -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stilurile premium unificate -->
+  <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header>
+    <div class="nav-container">
+      <a class="brand" href="index.html">
+        <span>Fleet</span>ly
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Acasă</a></li>
+        <li><a href="flota.html">Flotă</a></li>
+        <li><a href="servicii.html">Servicii</a></li>
+        <li><a href="avantaje.html">Avantaje</a></li>
+        <li><a href="noutati.html">Noutăți</a></li>
+        <li><a href="taskuri.html" class="active">Taskuri</a></li>
+        <li><a href="login.html">Portal</a></li>
+      </ul>
+      <a class="btn btn-primary" href="mailto:office@fleetly.ro">Contact</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" style="min-height: 40vh; padding: 4rem 2rem;">
+    <div class="hero-bg-accent" style="height: 400px; width: 400px;"></div>
+    <div class="hero-container" style="grid-template-columns: 1fr;">
+      <div class="hero-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <p class="hero-tagline" style="border: none; padding: 0; text-align: center;">Plan de lucru &amp; Responsabilități</p>
+        <h1 class="hero-title" style="font-size: clamp(2rem, 4vw, 3.2rem);">Taskuri Echipa <span>Fleetly</span></h1>
+        <p class="hero-description" style="margin: 0 auto; max-width: 650px;">
+          Evidența responsabilităților pentru echipa formată din 2 developeri, analist, designer și bug tester, pentru o implementare riguroasă și structurată.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM TASKS SECTION -->
+  <section class="fleet-section" style="padding-top: 3rem;">
+    
+    <div class="advantage-card" style="background: var(--bg-secondary); padding: 3rem; margin-bottom: 4rem; border-color: var(--border-medium);">
+      <h2 style="font-family: var(--font-serif); font-size: 1.8rem; font-weight: 600; margin-bottom: 1.5rem; background: var(--silver-chrome); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Research &amp; Cerințe Analist</h2>
+      <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+        <li>Analizează piața parcului auto și competitorii locali pentru funcționalități relevante.</li>
+        <li>Identifică cele mai importante probleme ale managerilor de flotă: monitorizare, mentenanță, conformitate și rapoarte.</li>
+        <li>Colectează cerințe de la șoferi, manageri de flotă și utilizatori finali pentru o soluție practică.</li>
+        <li>Transformă concluziile în taskuri de dezvoltare clare pentru design, frontend și testare.</li>
+      </ul>
+    </div>
+
+    <div class="section-intro" style="margin-bottom: 2rem;">
+      <div class="section-title-wrapper">
+        <h2>Urmărire User Stories &amp; Roluri</h2>
+        <p>Responsabilitățile fiecărui membru al echipei pe parcursul dezvoltării proiectului.</p>
+      </div>
+    </div>
+
+    <!-- ROLES GRID -->
+    <div class="fleet-grid" style="margin-bottom: 4rem;">
+      <div class="advantage-card" style="background: var(--bg-secondary); padding: 2rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600;"><i class="fa-solid fa-code" style="margin-right: 8px;"></i> Developer 1</h3>
+        <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+          <li>Construiește pagina de taskuri și menține structura HTML consistentă.</li>
+          <li>Implementează navigația completă și testarea locală a elementelor.</li>
+          <li>Corectează erorile de afișare și optimizează timpii de încărcare.</li>
+        </ul>
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--accent-amber); font-weight: 700;">Status: În desfășurare</div>
+      </div>
+
+      <div class="advantage-card" style="background: var(--bg-secondary); padding: 2rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600;"><i class="fa-solid fa-code" style="margin-right: 8px;"></i> Developer 2</h3>
+        <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+          <li>Asigură funcționarea butoanelor și a link-urilor dintre pagini.</li>
+          <li>Verifică compatibilitatea CSS-ului și comportamentul responsiv pe mobil.</li>
+          <li>Optimizează încărcarea imaginilor la rezoluții înalte.</li>
+        </ul>
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--accent-amber); font-weight: 700;">Status: În desfășurare</div>
+      </div>
+
+      <div class="advantage-card" style="background: var(--bg-secondary); padding: 2rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600;"><i class="fa-solid fa-compass-drafting" style="margin-right: 8px;"></i> Designer</h3>
+        <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+          <li>Selectează imaginile auto oficiale și aplică schema cromatică metalizată.</li>
+          <li>Definește stilurile tipografice premium pentru butoane și headers.</li>
+          <li>Verifică contrastul și lizibilitatea pe ecrane de diverse dimensiuni.</li>
+        </ul>
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Status: În așteptare</div>
+      </div>
+
+      <div class="advantage-card" style="background: var(--bg-secondary); padding: 2rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600;"><i class="fa-solid fa-bug-slash" style="margin-right: 8px;"></i> Bug Tester</h3>
+        <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+          <li>Verifică funcționalitatea linkurilor din navbar și a butoanelor din modale.</li>
+          <li>Raportează eventualele elemente care se suprapun pe ecrane mici.</li>
+          <li>Validează conformitatea fluxului final cu cerințele analistului.</li>
+        </ul>
+        <div style="margin-top: 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Status: În așteptare</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand-column">
+          <a class="brand" href="index.html">
+            <span>Fleet</span>ly
+          </a>
+          <p>Dealership auto autorizat cu accent pe mașini verificate, transparență totală și asistență de specialitate pentru cumpărători.</p>
+        </div>
+        <div class="footer-column">
+          <h3>Navigare</h3>
+          <ul class="footer-links">
+            <li><a href="index.html">Acasă</a></li>
+            <li><a href="flota.html">Flotă Auto</a></li>
+            <li><a href="servicii.html">Servicii Mentenanță</a></li>
+            <li><a href="avantaje.html">Avantaje</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Link-uri Utile</h3>
+          <ul class="footer-links">
+            <li><a href="noutati.html">Noutăți &amp; Blog</a></li>
+            <li><a href="login.html">Portal Clienți</a></li>
+            <li><a href="login.html">Autentificare Șoferi</a></li>
+            <li><a href="mailto:office@fleetly.ro">Asistență Client</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contact Dealership</h3>
+          <div class="footer-contact-info">
+            <span><i class="fa-solid fa-location-dot"></i> Șoseaua Pipera 42, București</span>
+            <span><i class="fa-solid fa-phone"></i> +40 745 123 456</span>
+            <span><i class="fa-solid fa-envelope"></i> office@fleetly.ro</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fleetly Dealership. Toate drepturile rezervate. Mașini certificate premium.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

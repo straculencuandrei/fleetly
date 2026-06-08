@@ -1,14 +1,22 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
   "name": "fleetly",
-  "compatibility_date": "2026-05-27",
+  "main": "worker.js",
+  "compatibility_date": "2026-05-27", // Păstrat din configurarea ta originală
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": "./public",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
-    "nodejs_compat"
+    "nodejs_compat" // Obligatoriu pentru driverul 'pg'
+  ],
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "34efca11ed114f2b9c4f517b94aac4f3"
+    }
   ]
 }

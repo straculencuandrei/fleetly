@@ -172,67 +172,57 @@
     </div>
 
     <script>
-        document.getElementById('formLogin').addEventListener('submit', function(e) {
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const userIntrodus = document.getElementById('user').value.trim();
             const parolaIntrodusa = document.getElementById('pass').value;
+            const errorEl = document.getElementById('mesajEroare');
+            const submitBtn = document.querySelector('#formLogin button[type="submit"]');
 
-            // Definim utilizatorii direct în script pentru a ocoli erorile de import
-            const utilizatoriPredefiniti = [
-                { username: "admin", parola: "admin123", rol: "admin" },
-                { username: "andrei", parola: "client123", rol: "client", driverId: "d1" },
-                { username: "mihai", parola: "client123", rol: "client", driverId: "d2" },
-                { username: "elena", parola: "client123", rol: "client", driverId: "d3" },
-                { username: "alexandru", parola: "client123", rol: "client", driverId: "d4" }
-            ];
+            errorEl.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Se conectează...';
 
-            // Dacă baza de date cu utilizatori nu există deloc sau nu conține noile conturi, o scriem/actualizăm acum
-            const localUsers = localStorage.getItem("fleet_users");
-            if (!localUsers || !localUsers.includes("andrei")) {
-                localStorage.setItem("fleet_users", JSON.stringify(utilizatoriPredefiniti));
-            }
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userIntrodus, password: parolaIntrodusa })
+                });
 
-            // Preluăm utilizatorii din localStorage
-            const bazeDateUtilizatori = JSON.parse(localStorage.getItem("fleet_users"));
-            
-            // Căutăm potrivirea
-            const contGasit = bazeDateUtilizatori.find(u => u.username === userIntrodus && u.parola === parolaIntrodusa);
+                const data = await response.json();
 
-            if (contGasit) {
-                // Dacă ne logăm de pe o sesiune coruptă/goală unde datele erau 0, curățăm restul tabelelor ca să forțăm app.js să le re-populeze curat
-                if (!localStorage.getItem("fleet_cars") || localStorage.getItem("fleet_cars") === "[]") {
-                    localStorage.removeItem("fleet_cars");
-                    localStorage.removeItem("fleet_drivers");
-                    localStorage.removeItem("fleet_service");
-                    localStorage.removeItem("fleet_insurances");
-                    localStorage.removeItem("fleet_vignettes");
-                    localStorage.removeItem("fleet_tires");
-                }
+                if (data.success) {
+                    // Salvăm starea sesiunii în localStorage (persistentă)
+                    localStorage.setItem('statusLogat', 'da');
+                    localStorage.setItem('rolUtilizator', data.rol);
+                    if (data.driverId) {
+                        localStorage.setItem('driverIdUtilizator', data.driverId);
+                    } else {
+                        localStorage.removeItem('driverIdUtilizator');
+                    }
 
-                // Salvăm starea sesiunii în localStorage (persistentă)
-                localStorage.setItem('statusLogat', 'da');
-                localStorage.setItem('rolUtilizator', contGasit.rol);
-                if (contGasit.driverId) {
-                    localStorage.setItem('driverIdUtilizator', contGasit.driverId);
+                    // Token de sesiune în sessionStorage (există DOAR în tab-ul curent).
+                    sessionStorage.setItem('fleetly_session', data.rol + '_verified');
+
+                    // Trimitem utilizatorul direct în Dashboard
+                    if (data.rol === 'client') {
+                        window.location.href = 'clientpanel.html';
+                    } else {
+                        window.location.href = 'adminpanellogpage.html';
+                    }
                 } else {
-                    localStorage.removeItem('driverIdUtilizator');
+                    errorEl.textContent = data.error || 'Utilizator sau parolă incorectă!';
+                    errorEl.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Conectare';
                 }
-
-                // Token de sesiune în sessionStorage (există DOAR în tab-ul curent).
-                // Dacă cineva tastează URL-ul direct într-un tab nou, acest token lipseşte
-                // şi page guard-ul blochează accesul indiferent de ce e în localStorage.
-                sessionStorage.setItem('fleetly_session', contGasit.rol + '_verified');
-                
-                // Trimitem utilizatorul direct în Dashboard
-                if (contGasit.rol === 'client') {
-                    window.location.href = 'clientpanel.html';
-                } else {
-                    window.location.href = 'adminpanellogpage.html';
-                }
-            } else {
-                // Afișăm eroarea în caz de credențiale greșite
-                document.getElementById('mesajEroare').style.display = 'block';
+            } catch (err) {
+                errorEl.textContent = 'Eroare de rețea. Verificați conexiunea.';
+                errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Conectare';
             }
         });
 

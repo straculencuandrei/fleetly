@@ -85,104 +85,7 @@
 
     <!-- STOC CARDS -->
     <div class="fleet-grid" id="catalog-container">
-      <!-- Vehicul 1 -->
-      <div class="car-card" data-brand="Audi A6 S-Line" data-category="Sedan Premium" data-price="34900">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/luxury_silver_sedan.png" alt="Audi A6 S-Line în nuanță argintie lucioasă">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Audi A6 S-Line</h3>
-              <span class="car-category">Sedan Premium</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">34.900 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2022</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 62.000 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
-            <div class="spec-info"><i class="fa-solid fa-bolt"></i> Mild Hybrid</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 450 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('audi')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vehicul 2 -->
-      <div class="car-card" data-brand="Volvo XC90 Recharge" data-category="SUV Luxury" data-price="62500">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/dark_metal_suv.png" alt="Volvo XC90 Recharge în nuanță metal închis mat">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Volvo XC90 Recharge</h3>
-              <span class="car-category">SUV Luxury</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">62.500 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2023</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 34.000 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
-            <div class="spec-info"><i class="fa-solid fa-leaf"></i> Plug-In Hybrid</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 790 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('volvo')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vehicul 3 -->
-      <div class="car-card" data-brand="Porsche 911 Carrera S" data-category="Sports Premium" data-price="119000">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/grey_sports_car.png" alt="Porsche 911 Carrera S finisat în gri carbon metalizat">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Porsche 911 Carrera S</h3>
-              <span class="car-category">Sports Premium</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">119.000 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2021</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 18.500 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat (PDK)</div>
-            <div class="spec-info"><i class="fa-solid fa-fire-flame-simple"></i> Benzină</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 1.450 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('porsche')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
+      <!-- Mașini încărcate dinamic din PostgreSQL -->
     </div>
   </section>
 
@@ -284,75 +187,13 @@
     </div>
   </footer>
 
+  <script src="api.js"></script>
+  <script src="public-fallback.js"></script>
+  <script src="public-cars.js"></script>
   <script>
-    const carDatabase = {
-      audi: {
-        title: "Audi A6 S-Line 40 TDI mild-hybrid",
-        desc: "Audi A6 în echipare S-Line îmbină un consum redus de combustibil cu performanțe dinamice excelente. Oferă finisaje premium și dotări tehnologice de ultimă oră.",
-        img: "images/luxury_silver_sedan.png",
-        specs: {
-          "An Fabricație": "2022",
-          "Kilometraj": "62.000 km",
-          "Combustibil": "Diesel / Mild-Hybrid",
-          "Cai Putere": "204 CP",
-          "Transmisie": "Automată S-Tronic 7 trepte",
-          "Culoare": "Silver Metallic",
-          "Istoric revizii": "Complet (reprezentanță)",
-          "Garanție": "12 Luni incluse"
-        }
-      },
-      volvo: {
-        title: "Volvo XC90 Recharge T8 Plug-In Hybrid",
-        desc: "SUV-ul de top XC90 Recharge oferă 7 locuri confortabile și siguranță absolută. Modelul ideal pentru călătorii de lungă durată cu întreaga familie.",
-        img: "images/dark_metal_suv.png",
-        specs: {
-          "An Fabricație": "2023",
-          "Kilometraj": "34.000 km",
-          "Combustibil": "Benzină / Plug-In Hybrid",
-          "Cai Putere": "455 CP",
-          "Transmisie": "Automată Geartronic 8 trepte",
-          "Capacitate": "7 Locuri",
-          "Autonomie EV": "Până la 68 km",
-          "Garanție": "12 Luni incluse"
-        }
-      },
-      porsche: {
-        title: "Porsche 911 Carrera S (992)",
-        desc: "O operă de artă a ingineriei germane, Porsche 911 oferă o dinamică sportivă de neegalat, menținând în același timp confortul necesar unei utilizări zilnice.",
-        img: "images/grey_sports_car.png",
-        specs: {
-          "An Fabricație": "2021",
-          "Kilometraj": "18.500 km",
-          "Combustibil": "Benzină",
-          "Cai Putere": "450 CP",
-          "Transmisie": "Automată PDK 8 trepte",
-          "0-100 km/h": "3.7 secunde",
-          "Interior": "Piele neagră integrală",
-          "Garanție": "12 Luni Porsche Approved"
-        }
-      }
-    };
-
-    function showCarDetails(key) {
-      const car = carDatabase[key];
-      if (!car) return;
-
-      document.getElementById('modal-title').innerText = car.title;
-      document.getElementById('modal-desc').innerText = car.desc;
-      document.getElementById('modal-img').src = car.img;
-      document.getElementById('inquiry-car-name').value = car.title;
-
-      const specsContainer = document.getElementById('modal-specs');
-      specsContainer.innerHTML = '';
-      for (const [label, val] of Object.entries(car.specs)) {
-        const row = document.createElement('div');
-        row.className = 'modal-spec-row';
-        row.innerHTML = `<span>${label}</span><span>${val}</span>`;
-        specsContainer.appendChild(row);
-      }
-
-      document.getElementById('car-modal').classList.add('active');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      initPublicCars('catalog-container');
+    });
 
     function closeCarDetails() {
       document.getElementById('car-modal').classList.remove('active');

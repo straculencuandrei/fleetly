@@ -848,6 +848,11 @@ body.role-client .responsive-table td:last-child {
     display: none !important;
 }
 
+body.role-client #cars .responsive-table th:last-child,
+body.role-client #cars .responsive-table td:last-child {
+    display: table-cell !important;
+}
+
 /* Elemente specifice clienților */
 .doar-client {
     display: none !important;

@@ -7,40 +7,106 @@ const driverIdUtilizator = localStorage.getItem('driverIdUtilizator');
 if (statusLogat !== 'da') {
     window.location.replace('login.html');
 }
-// Rulăm funcțiile când documentul s-a încărcat complet
-document.addEventListener("DOMContentLoaded", () => {
-    initApp();
-});
-
-// Starea curentă a aplicației (încarcă din localStorage)
+// Starea curentă a aplicației (localStorage + sincronizare PostgreSQL)
+let useApi = false;
 let state = {
     cars: JSON.parse(localStorage.getItem("fleet_cars")) || [],
     drivers: JSON.parse(localStorage.getItem("fleet_drivers")) || [],
     service: JSON.parse(localStorage.getItem("fleet_service")) || [],
     insurances: JSON.parse(localStorage.getItem("fleet_insurances")) || [],
     vignettes: JSON.parse(localStorage.getItem("fleet_vignettes")) || [],
-    tires: JSON.parse(localStorage.getItem("fleet_tires")) || []
+    tires: JSON.parse(localStorage.getItem("fleet_tires")) || [],
+    users: JSON.parse(localStorage.getItem("fleet_users")) || []
 };
 
-// Identificăm mașina alocată clientului dacă e logat ca și client
-let clientCarId = null;
-if (rolUtilizator === 'client' && driverIdUtilizator) {
-    const activeDriver = state.drivers.find(d => d.id === driverIdUtilizator);
-    if (activeDriver) {
-        clientCarId = activeDriver.assignedCarId;
+async function loadStateFromApi() {
+    if (!window.FleetAPI) return false;
+    try {
+        useApi = await FleetAPI.ping();
+        if (!useApi) return false;
+        const data = await FleetAPI.getState();
+        state = data;
+        cacheStateLocally();
+        return true;
+    } catch (e) {
+        console.warn("API indisponibil, folosesc localStorage:", e);
+        useApi = false;
+        return false;
     }
 }
 
-// Salvare stare în localStorage
-function saveState() {
+function cacheStateLocally() {
     localStorage.setItem("fleet_cars", JSON.stringify(state.cars));
     localStorage.setItem("fleet_drivers", JSON.stringify(state.drivers));
     localStorage.setItem("fleet_service", JSON.stringify(state.service));
     localStorage.setItem("fleet_insurances", JSON.stringify(state.insurances));
     localStorage.setItem("fleet_vignettes", JSON.stringify(state.vignettes));
     localStorage.setItem("fleet_tires", JSON.stringify(state.tires));
+    localStorage.setItem("fleet_users", JSON.stringify(state.users || []));
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadStateFromApi();
+    initApp();
+});
+
+// Identificăm mașina alocată clientului dacă e logat ca și client
+let clientCarId = null;
+function updateClientCarId() {
+    if (rolUtilizator === 'client' && driverIdUtilizator) {
+        const activeDriver = state.drivers.find(d => d.id === driverIdUtilizator);
+        if (activeDriver) {
+            clientCarId = activeDriver.assignedCarId;
+        } else {
+            clientCarId = null;
+        }
+    } else {
+        clientCarId = null;
+    }
+}
+updateClientCarId();
+
+function updateClientCarButton() {
+    const btn = document.getElementById("btn-client-car");
+    if (!btn) return;
     
-    // Recalculează dashboard-ul și tabelele active după salvare
+    if (clientCarId) {
+        btn.innerHTML = `<i class="fa-solid fa-pen"></i> Editează Mașina Ta`;
+        btn.onclick = () => editCar(clientCarId);
+    } else {
+        btn.innerHTML = `<i class="fa-solid fa-plus"></i> Adaugă Mașina Ta`;
+        btn.onclick = () => openClientCarModal();
+    }
+}
+
+function openClientCarModal() {
+    // Reset/Setup modal for adding a client car
+    document.getElementById("modal-car-title").textContent = "Adaugă Mașina Ta";
+    document.getElementById("car-id").value = "";
+    document.getElementById("car-plate").value = "";
+    document.getElementById("car-brand").value = "";
+    document.getElementById("car-model").value = "";
+    document.getElementById("car-year").value = new Date().getFullYear();
+    document.getElementById("car-fuel").value = "Benzină";
+    document.getElementById("car-status").value = "Activ";
+    
+    if (document.getElementById("car-listed")) document.getElementById("car-listed").checked = false;
+    
+    openModal("modal-car");
+}
+
+// Salvare stare în localStorage + PostgreSQL
+function saveState() {
+    updateClientCarId();
+    cacheStateLocally();
+
+    if (useApi && window.FleetAPI) {
+        FleetAPI.saveState(state).catch((e) => {
+            console.error("Eroare sincronizare API:", e);
+            alert("Modificarea a fost salvată local, dar sincronizarea cu baza de date a eșuat.");
+        });
+    }
+
     updateDashboard();
     populateTables();
 }
@@ -122,6 +188,21 @@ function checkExpiryStatus(expiryDateString) {
 // 2. DASHBOARD - STATISTICI ȘI ALERTE
 // ----------------------------------------------------
 function updateDashboard() {
+    // Afișează/ascunde cardul de onboarding pentru clienții fără mașină
+    const onboardingEl = document.getElementById("client-onboarding");
+    if (onboardingEl) {
+        if (rolUtilizator === 'client' && !clientCarId) {
+            onboardingEl.style.display = "flex";
+        } else {
+            onboardingEl.style.display = "none";
+        }
+    }
+    
+    // Actualizează butonul de acțiune al mașinii clientului
+    if (rolUtilizator === 'client') {
+        updateClientCarButton();
+    }
+
     // Dacă utilizatorul curent este client, calculăm statisticile specifice clientului
     if (rolUtilizator === 'client') {
         const clientCar = state.cars.find(c => c.id === clientCarId);
@@ -347,6 +428,10 @@ function populateSelectDropdowns() {
         select.innerHTML = firstOption;
         
         state.cars.forEach(car => {
+            // Dacă e client, adăugăm doar mașina alocată
+            if (rolUtilizator === 'client' && car.id !== clientCarId) {
+                return;
+            }
             const opt = document.createElement("option");
             opt.value = car.id;
             opt.textContent = `${car.plateNumber} (${car.brand} ${car.model})`;
@@ -363,6 +448,20 @@ function populateCarsTable() {
 
     const searchQuery = document.getElementById("search-cars").value.toLowerCase();
     const statusFilter = document.getElementById("filter-car-status").value;
+
+    if (rolUtilizator === 'client' && !clientCarId) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 16px;">
+                <i class="fa-solid fa-car"></i>
+            </div>
+            <h3 style="margin-bottom: 8px; color: var(--text-primary);">Nu ai adăugat nicio mașină încă</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">Adaugă mașina ta personală pentru a putea să-i monitorizezi asigurările, vinietele și reviziile.</p>
+            <button class="btn btn-primary" onclick="openClientCarModal()">
+                <i class="fa-solid fa-plus"></i> Adaugă Mașina Ta
+            </button>
+        </td></tr>`;
+        return;
+    }
 
     const filteredCars = state.cars.filter(car => {
         if (rolUtilizator === 'client' && car.id !== clientCarId) {
@@ -388,7 +487,7 @@ function populateCarsTable() {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td><strong>${car.plateNumber}</strong></td>
-            <td>${car.brand} ${car.model}</td>
+            <td>${car.brand} ${car.model}${car.isListed ? ' <span class="badge badge-info" title="Listat pe site">Site</span>' : ''}</td>
             <td>${car.year}</td>
             <td>${car.fuelType}</td>
             <td><span class="badge ${badgeClass}">${car.status}</span></td>
@@ -649,24 +748,45 @@ function saveCar(e) {
     const year = Number(document.getElementById("car-year").value);
     const fuel = document.getElementById("car-fuel").value;
     const status = document.getElementById("car-status").value;
+    const isListed = document.getElementById("car-listed")?.checked || false;
+    const category = document.getElementById("car-category")?.value.trim() || null;
+    const price = document.getElementById("car-price")?.value ? Number(document.getElementById("car-price").value) : null;
+    const mileage = document.getElementById("car-mileage")?.value ? Number(document.getElementById("car-mileage").value) : null;
+    const existing = id ? state.cars.find(c => c.id === id) : null;
+
+    const carData = {
+        id: id || generateId(),
+        plateNumber: plate,
+        brand,
+        model,
+        year,
+        fuelType: fuel,
+        status,
+        isListed,
+        category,
+        price,
+        mileage,
+        transmission: existing?.transmission || (isListed ? "Automat" : null),
+        imageUrl: existing?.imageUrl || null,
+        description: existing?.description || null,
+        specs: existing?.specs || {},
+        financingMonthly: existing?.financingMonthly || (price ? Math.round(price / 78) : null),
+        badge: existing?.badge || "Disponibil",
+    };
 
     if (id) {
-        // Editare
         const idx = state.cars.findIndex(c => c.id === id);
-        if (idx !== -1) {
-            state.cars[idx] = { id, plateNumber: plate, brand, model, year, fuelType: fuel, status };
-        }
+        if (idx !== -1) state.cars[idx] = carData;
     } else {
-        // Adăugare
-        state.cars.push({
-            id: generateId(),
-            plateNumber: plate,
-            brand,
-            model,
-            year,
-            fuelType: fuel,
-            status
-        });
+        state.cars.push(carData);
+    }
+
+    if (rolUtilizator === 'client' && driverIdUtilizator) {
+        const activeDriver = state.drivers.find(d => d.id === driverIdUtilizator);
+        if (activeDriver) {
+            activeDriver.assignedCarId = carData.id;
+            clientCarId = carData.id;
+        }
     }
 
     saveState();
@@ -686,6 +806,10 @@ function editCar(id) {
     document.getElementById("car-year").value = car.year;
     document.getElementById("car-fuel").value = car.fuelType;
     document.getElementById("car-status").value = car.status;
+    if (document.getElementById("car-listed")) document.getElementById("car-listed").checked = !!car.isListed;
+    if (document.getElementById("car-category")) document.getElementById("car-category").value = car.category || "";
+    if (document.getElementById("car-price")) document.getElementById("car-price").value = car.price || "";
+    if (document.getElementById("car-mileage")) document.getElementById("car-mileage").value = car.mileage || "";
 
     openModal("modal-car");
 }
@@ -996,22 +1120,35 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-function resetDatabase() {
-    if (confirm("Sigur doriți să resetați baza de date la valorile demo inițiale? Toate modificările curente vor fi pierdute.")) {
-        localStorage.removeItem("fleet_cars");
-        localStorage.removeItem("fleet_drivers");
-        localStorage.removeItem("fleet_service");
-        localStorage.removeItem("fleet_insurances");
-        localStorage.removeItem("fleet_vignettes");
-        localStorage.removeItem("fleet_tires");
-        
-        // Apelăm funcția de inițializare din mockData.js
-        if (typeof initializeStorage === "function") {
-            initializeStorage();
-        }
-        
-        window.location.reload();
+async function resetDatabase() {
+    if (!confirm("Sigur doriți să resetați baza de date la valorile demo inițiale? Toate modificările curente vor fi pierdute.")) {
+        return;
     }
+
+    if (useApi && window.FleetAPI) {
+        try {
+            await FleetAPI.resetDemo();
+            window.location.reload();
+            return;
+        } catch (e) {
+            console.error(e);
+            alert("Reset API eșuat, se folosește reset local.");
+        }
+    }
+
+    localStorage.removeItem("fleet_cars");
+    localStorage.removeItem("fleet_drivers");
+    localStorage.removeItem("fleet_service");
+    localStorage.removeItem("fleet_insurances");
+    localStorage.removeItem("fleet_vignettes");
+    localStorage.removeItem("fleet_tires");
+    localStorage.removeItem("fleet_users");
+
+    if (typeof initializeStorage === "function") {
+        initializeStorage();
+    }
+
+    window.location.reload();
 }
 
 // ----------------------------------------------------

@@ -161,7 +161,8 @@
 </head>
 <body>
 
-    <div class="login-box">
+    <!-- Box-ul de Conectare -->
+    <div class="login-box" id="loginBox">
         <h2>Fleetly Login</h2>
         <form id="formLogin">
             <input type="text" id="user" placeholder="Utilizator (admin sau client)" required autocomplete="off">
@@ -169,25 +170,176 @@
             <button type="submit">Conectare</button>
         </form>
         <p id="mesajEroare">Utilizator sau parolă incorectă!</p>
+        <div style="margin-top: 20px;">
+            <a href="#" id="btnShowRegister" style="color: #38bdf8; text-decoration: none; font-size: 14px; font-weight: 500;">Nu ai cont? Înregistrează-te</a>
+        </div>
     </div>
 
+    <!-- Box-ul de Înregistrare -->
+    <div class="login-box" id="registerBox" style="display: none; width: 340px;">
+        <h2>Creează Cont Nou</h2>
+        <form id="formRegister">
+            <input type="text" id="regUser" placeholder="Nume utilizator" required autocomplete="off">
+            <input type="text" id="regFullName" placeholder="Nume complet (Nume Șofer)" required autocomplete="off">
+            <input type="password" id="regPass" placeholder="Parolă" required>
+            <input type="password" id="regConfirmPass" placeholder="Confirmare parolă" required>
+            <button type="submit">Înregistrare</button>
+        </form>
+        <p id="mesajEroareReg" style="color: #ef4444; display: none; margin-top: 15px; font-size: 14px; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.2);"></p>
+        <div id="mesajSuccesReg" style="color: #10b981; display: none; margin-top: 15px; font-size: 14px; background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.2); text-align: left; line-height: 1.5; word-break: break-all;"></div>
+        <div style="margin-top: 20px;">
+            <a href="#" id="btnShowLogin" style="color: #38bdf8; text-decoration: none; font-size: 14px; font-weight: 500;">Ai deja cont? Conectează-te</a>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
     <script>
+        const utilizatoriPredefiniti = [
+            { username: "admin", parola: "admin123", rol: "admin" },
+            { username: "andrei", parola: "client123", rol: "client", driverId: "d1" },
+            { username: "mihai", parola: "client123", rol: "client", driverId: "d2" },
+            { username: "elena", parola: "client123", rol: "client", driverId: "d3" },
+            { username: "alexandru", parola: "client123", rol: "client", driverId: "d4" }
+        ];
+
+        // Sincronizare inițială cu baza de date
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (window.FleetAPI) {
+                try {
+                    const hasApi = await FleetAPI.ping();
+                    if (hasApi) {
+                        const dbState = await FleetAPI.getState();
+                        if (dbState && dbState.users && dbState.users.length > 0) {
+                            localStorage.setItem("fleet_users", JSON.stringify(dbState.users));
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Eroare la sincronizarea utilizatorilor cu API-ul la încărcare:", e);
+                }
+            }
+        });
+
+        // Toggle între Login și Register
+        document.getElementById('btnShowRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('registerBox').style.display = 'block';
+            document.getElementById('mesajEroare').style.display = 'none';
+        });
+
+        document.getElementById('btnShowLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('registerBox').style.display = 'none';
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('mesajEroareReg').style.display = 'none';
+            document.getElementById('mesajSuccesReg').style.display = 'none';
+        });
+
+        document.getElementById('formRegister').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUser').value.trim();
+            const fullName = document.getElementById('regFullName').value.trim();
+            const password = document.getElementById('regPass').value;
+            const confirmPassword = document.getElementById('regConfirmPass').value;
+            
+            const errEl = document.getElementById('mesajEroareReg');
+            const successEl = document.getElementById('mesajSuccesReg');
+            errEl.style.display = 'none';
+            successEl.style.display = 'none';
+
+            if (password !== confirmPassword) {
+                errEl.textContent = 'Parolele nu coincid!';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                let currentUsers = [];
+                let currentDrivers = [];
+                let dbState = null;
+                let hasApi = false;
+
+                if (window.FleetAPI) {
+                    hasApi = await FleetAPI.ping();
+                    if (hasApi) {
+                        dbState = await FleetAPI.getState();
+                        currentUsers = dbState.users || [];
+                        currentDrivers = dbState.drivers || [];
+                    }
+                }
+
+                if (!hasApi) {
+                    currentUsers = JSON.parse(localStorage.getItem("fleet_users")) || utilizatoriPredefiniti;
+                    currentDrivers = JSON.parse(localStorage.getItem("fleet_drivers")) || [];
+                }
+
+                // Verificare dacă utilizatorul există deja
+                if (currentUsers.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                    errEl.textContent = 'Acest nume de utilizator este deja folosit!';
+                    errEl.style.display = 'block';
+                    return;
+                }
+
+                // Generare IDs
+                const driverId = 'd_' + Math.random().toString(36).substr(2, 9);
+                const passkey = 'key_' + Math.random().toString(36).substr(2, 10);
+
+                // Adăugare șofer nou
+                const newDriver = {
+                    id: driverId,
+                    name: fullName,
+                    licenseCategory: 'B',
+                    phone: '',
+                    licenseExpiry: new Date(Date.now() + 365*10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 10 ani valabilitate implicită
+                    assignedCarId: ''
+                };
+
+                // Adăugare utilizator nou
+                const newUser = {
+                    username: username,
+                    parola: password,
+                    rol: 'client',
+                    driverId: driverId,
+                    passkey: passkey
+                };
+
+                if (hasApi && dbState) {
+                    // Adăugăm în starea completă a bazei de date și salvăm
+                    dbState.users.push(newUser);
+                    dbState.drivers.push(newDriver);
+                    await FleetAPI.saveState(dbState);
+                    localStorage.setItem("fleet_users", JSON.stringify(dbState.users));
+                    localStorage.setItem("fleet_drivers", JSON.stringify(dbState.drivers));
+                } else {
+                    // Salvăm doar local
+                    currentUsers.push(newUser);
+                    currentDrivers.push(newDriver);
+                    localStorage.setItem("fleet_users", JSON.stringify(currentUsers));
+                    localStorage.setItem("fleet_drivers", JSON.stringify(currentDrivers));
+                }
+
+                successEl.innerHTML = `
+                    <strong>Cont creat cu succes!</strong><br>
+                    Cheia ta unică de acces (passkey) este:<br>
+                    <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #38bdf8; font-size: 15px; display: inline-block; margin: 8px 0;">${passkey}</code><br>
+                    <span style="font-size: 12px; color: #94a3b8;">Salvează cheia pentru utilizare externă sau în alți clienți.</span>
+                `;
+                successEl.style.display = 'block';
+                document.getElementById('formRegister').reset();
+            } catch (err) {
+                console.error(err);
+                errEl.textContent = 'Eroare la crearea contului: ' + (err.message || 'Eroare conexiune.');
+                errEl.style.display = 'block';
+            }
+        });
+
         document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const userIntrodus = document.getElementById('user').value.trim();
             const parolaIntrodusa = document.getElementById('pass').value;
 
-            // Definim utilizatorii direct în script pentru a ocoli erorile de import
-            const utilizatoriPredefiniti = [
-                { username: "admin", parola: "admin123", rol: "admin" },
-                { username: "andrei", parola: "client123", rol: "client", driverId: "d1" },
-                { username: "mihai", parola: "client123", rol: "client", driverId: "d2" },
-                { username: "elena", parola: "client123", rol: "client", driverId: "d3" },
-                { username: "alexandru", parola: "client123", rol: "client", driverId: "d4" }
-            ];
-
-            // Dacă baza de date cu utilizatori nu există deloc sau nu conține noile conturi, o scriem/actualizăm acum
+            // Dacă baza de date cu utilizatori nu există deloc, o scriem cu valorile implicite
             const localUsers = localStorage.getItem("fleet_users");
             if (!localUsers || !localUsers.includes("andrei")) {
                 localStorage.setItem("fleet_users", JSON.stringify(utilizatoriPredefiniti));

@@ -109,6 +109,22 @@
                     </div>
                 </div>
 
+                <!-- Card Onboarding Client -->
+                <div id="client-onboarding" class="doar-client" style="display: none; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; align-items: center; gap: 20px; justify-content: space-between; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 50px; height: 50px; background: rgba(59, 130, 246, 0.2); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--accent-blue); font-size: 24px;">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 18px; color: var(--text-primary);">Bun venit pe Fleetly!</h3>
+                            <p style="margin: 0; font-size: 14px; color: var(--text-secondary);">Pentru a începe, adaugă mașina ta personală pe care o folosești ca și client.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openClientCarModal()">
+                        <i class="fa-solid fa-plus"></i> Adaugă Mașina Ta
+                    </button>
+                </div>
+
                 <!-- Carduri Statistici -->
                 <div class="stats-grid">
                     <!-- Carduri Admin -->
@@ -227,6 +243,11 @@
                     <div class="header-actions doar-admin">
                         <button class="btn btn-primary" onclick="openModal('modal-car')">
                             <i class="fa-solid fa-plus"></i> Adaugă Mașină
+                        </button>
+                    </div>
+                    <div class="header-actions doar-client">
+                        <button id="btn-client-car" class="btn btn-primary">
+                            <!-- Populated dynamically -->
                         </button>
                     </div>
                 </div>
@@ -825,6 +846,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="api.js"></script>
     <script src="mockData.js"></script>
     <script src="app.js"></script>
 </body>

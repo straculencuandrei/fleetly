@@ -118,110 +118,12 @@
         <p>Fiecare mașină este verificată în 150 de puncte și livrată într-o stare tehnică și estetică impecabilă.</p>
       </div>
       <div style="font-size: 0.9rem; color: var(--text-secondary);">
-        Afișare: <strong id="car-count">3</strong> din 3 autoturisme
+        Afișare: <strong id="car-count">0</strong> din <strong id="car-count-total">0</strong> autoturisme
       </div>
     </div>
     
     <div class="fleet-grid" id="fleet-container">
-      <!-- Vehicul 1 -->
-      <div class="car-card" data-brand="Audi A6 S-Line" data-category="Sedan Premium" data-fuel="Mild Hybrid">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/luxury_silver_sedan.png" alt="Audi A6 S-Line în nuanță argintie lucioasă">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Audi A6 S-Line</h3>
-              <span class="car-category">Sedan Premium</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">34.900 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2022</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 62.000 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
-            <div class="spec-info"><i class="fa-solid fa-bolt"></i> Mild Hybrid</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 450 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('audi')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vehicul 2 -->
-      <div class="car-card" data-brand="Volvo XC90 Recharge" data-category="SUV Luxury" data-fuel="Plug-In Hybrid">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/dark_metal_suv.png" alt="Volvo XC90 Recharge în nuanță metal închis mat">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Volvo XC90 Recharge</h3>
-              <span class="car-category">SUV Luxury</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">62.500 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2023</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 34.000 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat</div>
-            <div class="spec-info"><i class="fa-solid fa-leaf"></i> Plug-In Hybrid</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 790 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('volvo')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vehicul 3 -->
-      <div class="car-card" data-brand="Porsche 911 Carrera S" data-category="Sports Premium" data-fuel="Benzină">
-        <div class="car-img-wrapper">
-          <span class="car-badge available">Disponibil</span>
-          <img src="images/grey_sports_car.png" alt="Porsche 911 Carrera S finisat în gri carbon metalizat">
-        </div>
-        <div class="car-content">
-          <div class="car-header">
-            <div>
-              <h3 class="car-title">Porsche 911 Carrera S</h3>
-              <span class="car-category">Sports Premium</span>
-            </div>
-            <div class="car-price-block">
-              <span class="car-price">119.000 €</span>
-              <div class="car-price-period">TVA inclus</div>
-            </div>
-          </div>
-          <div class="car-specs">
-            <div class="spec-info"><i class="fa-solid fa-calendar"></i> 2021</div>
-            <div class="spec-info"><i class="fa-solid fa-gauge"></i> 18.500 km</div>
-            <div class="spec-info"><i class="fa-solid fa-gears"></i> Automat (PDK)</div>
-            <div class="spec-info"><i class="fa-solid fa-fire-flame-simple"></i> Benzină</div>
-          </div>
-          <div class="car-footer">
-            <div class="car-financing">
-              Finanțare estimată:
-              <strong>de la 1.450 € / lună</strong>
-            </div>
-            <button class="btn btn-accent" onclick="showCarDetails('porsche')">Detalii &amp; Test Drive</button>
-          </div>
-        </div>
-      </div>
-      
+      <!-- Mașini încărcate dinamic din PostgreSQL -->
       <!-- No Results Alert -->
       <div id="no-results" style="display: none; text-align: center; padding: 4rem 2rem; color: var(--text-secondary); grid-column: 1 / -1; background: var(--bg-secondary); border: 1px solid var(--border-light); border-radius: 6px; width: 100%;">
         <i class="fa-solid fa-car-burst" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1.5rem; display: block;"></i>
@@ -357,80 +259,13 @@
     </div>
   </footer>
 
-  <!-- SCRIPT PENTRU FILTRARE ȘI MODALE INTERACTIVE -->
+  <script src="api.js"></script>
+  <script src="public-fallback.js"></script>
+  <script src="public-cars.js"></script>
   <script>
-    // Baza de date statica pentru detalii mașini în modal
-    const carDatabase = {
-      audi: {
-        title: "Audi A6 S-Line 40 TDI mild-hybrid",
-        desc: "Audi A6 în echipare exclusivă S-Line combină performanța eficientă mild-hybrid cu eleganța designului exterior argintiu. Mașina este unică pe piață, cu un singur proprietar anterior, revizii efectuate complet doar în rețeaua oficială Audi și stare perfectă fără zgârieturi.",
-        img: "images/luxury_silver_sedan.png",
-        specs: {
-          "An Fabricație": "2022",
-          "Kilometraj": "62.000 km",
-          "Combustibil": "Diesel / Mild-Hybrid",
-          "Cai Putere": "204 CP",
-          "Transmisie": "Automată S-Tronic 7 trepte",
-          "Culoare": "Silver Metallic",
-          "Istoric revizii": "Complet (reprezentanță)",
-          "Garanție": "12 Luni incluse"
-        }
-      },
-      volvo: {
-        title: "Volvo XC90 Recharge T8 Plug-In Hybrid",
-        desc: "Cel mai sigur SUV din clasa sa, Volvo XC90 Recharge oferă putere fenomenală de 455 CP cu amprentă de carbon minimă datorită tehnologiei Plug-In Hybrid. Interiorul dispune de 7 locuri, finisaje premium din lemn suedez, scaune cu masaj din piele perforată și suspensie pneumatică activă.",
-        img: "images/dark_metal_suv.png",
-        specs: {
-          "An Fabricație": "2023",
-          "Kilometraj": "34.000 km",
-          "Combustibil": "Benzină / Plug-In Hybrid",
-          "Cai Putere": "455 CP",
-          "Transmisie": "Automată Geartronic 8 trepte",
-          "Capacitate": "7 Locuri",
-          "Autonomie EV": "Până la 68 km",
-          "Garanție": "12 Luni incluse"
-        }
-      },
-      porsche: {
-        title: "Porsche 911 Carrera S (992)",
-        desc: "Legendarul Porsche 911 în varianta Carrera S oferă dinamică pură și performanțe uluitoare pe șosea. Culoarea gri închis metalizat (Agate Grey) îi oferă o prezență discretă dar impozantă. Echipată cu evacuare sport activă, pachetul Sport Chrono și jante Carrera Exclusive Design.",
-        img: "images/grey_sports_car.png",
-        specs: {
-          "An Fabricație": "2021",
-          "Kilometraj": "18.500 km",
-          "Combustibil": "Benzină",
-          "Cai Putere": "450 CP",
-          "Transmisie": "Automată PDK 8 trepte",
-          "0-100 km/h": "3.7 secunde",
-          "Interior": "Piele neagră integrală",
-          "Garanție": "12 Luni Porsche Approved"
-        }
-      }
-    };
-
-    // Funcții pentru modale
-    function showCarDetails(key) {
-      const car = carDatabase[key];
-      if (!car) return;
-
-      document.getElementById('modal-title').innerText = car.title;
-      document.getElementById('modal-desc').innerText = car.desc;
-      document.getElementById('modal-img').src = car.img;
-      document.getElementById('inquiry-car-name').value = car.title;
-
-      // Generare specificații în listă
-      const specsContainer = document.getElementById('modal-specs');
-      specsContainer.innerHTML = '';
-      for (const [label, val] of Object.entries(car.specs)) {
-        const row = document.createElement('div');
-        row.className = 'modal-spec-row';
-        row.innerHTML = `<span>${label}</span><span>${val}</span>`;
-        specsContainer.appendChild(row);
-      }
-
-      // Deschiderea modalului cu animație
-      document.getElementById('car-modal').classList.add('active');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      initPublicCars('fleet-container', 'car-count');
+    });
 
     function closeCarDetails() {
       document.getElementById('car-modal').classList.remove('active');

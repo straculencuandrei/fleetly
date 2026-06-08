@@ -512,6 +512,30 @@
                             <option value="Inactiv">Inactiv</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" style="display:flex;align-items:center;gap:0.5rem;">
+                            <input type="checkbox" id="car-listed"> Afișează pe site-ul public
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="car-category">Categorie site</label>
+                            <select id="car-category" class="form-control">
+                                <option value="">—</option>
+                                <option value="Sedan Premium">Sedan Premium</option>
+                                <option value="SUV Luxury">SUV Luxury</option>
+                                <option value="Sports Premium">Sports Premium</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="car-price">Preț vânzare (€)</label>
+                            <input type="number" id="car-price" class="form-control" placeholder="ex: 34900" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="car-mileage">Kilometraj</label>
+                        <input type="number" id="car-mileage" class="form-control" placeholder="ex: 62000" min="0">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('modal-car')">Anulează</button>
@@ -831,6 +855,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="api.js"></script>
     <script src="mockData.js"></script>
     <script src="app.js"></script>
 </body>

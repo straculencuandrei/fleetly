@@ -16,7 +16,8 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "34efca11ed114f2b9c4f517b94aac4f3"
+      "id": "34efca11ed114f2b9c4f517b94aac4f3",
+      "localConnectionString": "postgresql://fleetlydb_user:g73UAbx9iAKDQPSgFsVpp2BDlejFsBoS@dpg-d8jf7kcm0tmc73ch14pg-a.virginia-postgres.render.com:5432/fleetlydb?sslmode=require"
     }
   ]
 }

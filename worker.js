@@ -73,7 +73,7 @@ async function handleLogin(request, env, ctx) {
 
   } catch (err) {
     console.error('DB error:', err.message);
-    ctx.waitUntil(client.end().catch(() => {}));
+    ctx.waitUntil(client.end().catch(() => { }));
     return jsonResponse({ success: false, error: 'Database error. Please try again.' }, 500);
   }
 }

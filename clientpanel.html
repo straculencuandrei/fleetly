@@ -229,6 +229,11 @@
                             <i class="fa-solid fa-plus"></i> Adaugă Mașină
                         </button>
                     </div>
+                    <div class="header-actions doar-client">
+                        <button class="btn btn-primary" onclick="openModal('modal-car-client')">
+                            <i class="fa-solid fa-plus"></i> Înregistrează Mașină Nouă
+                        </button>
+                    </div>
                 </div>
 
                 <div class="filter-bar">
@@ -510,6 +515,54 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('modal-car')">Anulează</button>
                     <button type="submit" class="btn btn-primary">Salvează Mașină</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ÎNREGISTREAZĂ MAȘINĂ NOUĂ (CLIENT) -->
+    <div id="modal-car-client" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Înregistrează Mașină Nouă</h3>
+                <button class="modal-close" onclick="closeModal('modal-car-client')">&times;</button>
+            </div>
+            <form id="form-car-client" onsubmit="saveCarClient(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="car-client-plate">Număr Înmatriculare</label>
+                        <input type="text" id="car-client-plate" class="form-control" placeholder="ex: B 123 ABC" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="car-client-brand">Marcă</label>
+                            <input type="text" id="car-client-brand" class="form-control" placeholder="ex: Dacia" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="car-client-model">Model</label>
+                            <input type="text" id="car-client-model" class="form-control" placeholder="ex: Logan" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="car-client-year">An Fabricație</label>
+                            <input type="number" id="car-client-year" class="form-control" placeholder="ex: 2021" min="1990" max="2027" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="car-client-fuel">Tip Combustibil</label>
+                            <select id="car-client-fuel" class="form-control" required>
+                                <option value="Benzină">Benzină</option>
+                                <option value="Motorină">Motorină</option>
+                                <option value="Benzină/GPL">Benzină/GPL</option>
+                                <option value="Hibrid">Hibrid</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-car-client')">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Înregistrează Mașină</button>
                 </div>
             </form>
         </div>
@@ -823,6 +876,34 @@
             </form>
         </div>
     </div>
+
+    <!-- Bottom Navigation Bar (mobil) -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <a href="#dashboard" data-tab="dashboard" class="active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#cars" data-tab="cars">
+            <i class="fa-solid fa-car"></i>
+            <span>Mașina mea</span>
+        </a>
+        <a href="#service" data-tab="service">
+            <i class="fa-solid fa-wrench"></i>
+            <span>Service</span>
+        </a>
+        <a href="#insurances" data-tab="insurances">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Asigurări</span>
+        </a>
+        <a href="#vignettes" data-tab="vignettes">
+            <i class="fa-solid fa-road"></i>
+            <span>Viniete</span>
+        </a>
+        <a href="#tires" data-tab="tires">
+            <i class="fa-solid fa-circle-notch"></i>
+            <span>Anvelope</span>
+        </a>
+    </nav>
 
     <!-- Scripts -->
     <script src="mockData.js"></script>

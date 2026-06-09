@@ -810,32 +810,76 @@ body {
     gap: 16px;
 }
 
-/* Responsive */
+/* ── Responsive Mobile ─────────────────────────────────── */
 @media (max-width: 768px) {
+    /* Ascunde sidebar-ul lateral pe mobil */
     .sidebar {
-        width: 70px;
-        padding: 16px 8px;
-    }
-    
-    .logo-text, .project-badge, .nav-item span {
         display: none;
     }
-    
-    .logo-container {
-        padding-bottom: 16px;
-        margin-bottom: 16px;
-        justify-content: center;
-    }
-    
+
+    /* Conținutul ocupă toată lățimea */
     .main-content {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-        padding: 20px;
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+        padding-bottom: 80px; /* spațiu pentru bara de jos */
     }
-    
-    .responsive-table th, .responsive-table td {
-        padding: 12px 16px;
+
+    /* Bara de navigare de jos (bottom nav) */
+    .mobile-bottom-nav {
+        display: flex !important;
     }
+}
+
+/* Bottom nav — ascuns pe desktop */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    z-index: 100;
+    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+
+.mobile-bottom-nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 500;
+    transition: var(--transition-fast);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.mobile-bottom-nav a i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.mobile-bottom-nav a span {
+    display: block !important;
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    text-align: center;
+}
+
+.mobile-bottom-nav a.active {
+    color: var(--accent-blue);
+}
+
+.mobile-bottom-nav a:hover {
+    color: var(--text-primary);
 }
 
 /* Roluri: Client vs Admin */

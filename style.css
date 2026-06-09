@@ -1,6 +1,6 @@
 /* style.css - Stiluri Premium pentru Aplicația Management Parc Auto */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
 
 :root {
     --bg-primary: #0f172a;
@@ -17,15 +17,15 @@
     --text-muted: #64748b;
     --border-color: #334155;
     --border-glow: rgba(59, 130, 246, 0.15);
-    
+
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-full: 9999px;
-    
+
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
+
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -37,7 +37,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Outfit', sans-serif;
+    font-family: "Outfit", sans-serif;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) var(--bg-primary);
 }
@@ -288,13 +288,13 @@ body {
 }
 
 .stat-card::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
     width: 60px;
     height: 60px;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
     border-radius: var(--radius-full);
 }
 
@@ -308,10 +308,22 @@ body {
     font-size: 20px;
 }
 
-.stat-icon.blue { background-color: rgba(59, 130, 246, 0.1); color: var(--accent-blue); }
-.stat-icon.emerald { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
-.stat-icon.rose { background-color: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
-.stat-icon.amber { background-color: rgba(245, 158, 11, 0.1); color: var(--accent-amber); }
+.stat-icon.blue {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--accent-blue);
+}
+.stat-icon.emerald {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--accent-emerald);
+}
+.stat-icon.rose {
+    background-color: rgba(244, 63, 94, 0.1);
+    color: var(--accent-rose);
+}
+.stat-icon.amber {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--accent-amber);
+}
 
 .stat-info {
     display: flex;
@@ -404,9 +416,15 @@ body {
     margin-top: 2px;
 }
 
-.alert-item.warning .alert-icon { color: var(--accent-amber); }
-.alert-item.info .alert-icon { color: var(--accent-blue); }
-.alert-item .alert-icon { color: var(--accent-rose); }
+.alert-item.warning .alert-icon {
+    color: var(--accent-amber);
+}
+.alert-item.info .alert-icon {
+    color: var(--accent-blue);
+}
+.alert-item .alert-icon {
+    color: var(--accent-rose);
+}
 
 .alert-content {
     flex-grow: 1;
@@ -610,10 +628,22 @@ body {
     letter-spacing: 0.2px;
 }
 
-.badge-success { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
-.badge-warning { background-color: rgba(245, 158, 11, 0.1); color: var(--accent-amber); }
-.badge-danger { background-color: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
-.badge-info { background-color: rgba(3b, 130, 246, 0.1); color: var(--accent-blue); }
+.badge-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--accent-emerald);
+}
+.badge-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--accent-amber);
+}
+.badge-danger {
+    background-color: rgba(244, 63, 94, 0.1);
+    color: var(--accent-rose);
+}
+.badge-info {
+    background-color: rgba(3b, 130, 246, 0.1);
+    color: var(--accent-blue);
+}
 
 /* Carduri / Liste alternative (pentru ecrane mici sau detalii) */
 .cards-grid {
@@ -816,24 +846,27 @@ body {
         width: 70px;
         padding: 16px 8px;
     }
-    
-    .logo-text, .project-badge, .nav-item span {
+
+    .logo-text,
+    .project-badge,
+    .nav-item span {
         display: none;
     }
-    
+
     .logo-container {
         padding-bottom: 16px;
         margin-bottom: 16px;
         justify-content: center;
     }
-    
+
     .main-content {
         margin-left: 70px;
         width: calc(100% - 70px);
         padding: 20px;
     }
-    
-    .responsive-table th, .responsive-table td {
+
+    .responsive-table th,
+    .responsive-table td {
         padding: 12px 16px;
     }
 }
@@ -861,4 +894,3 @@ body.role-client button.doar-client,
 body.role-client a.doar-client {
     display: inline-flex !important;
 }
-

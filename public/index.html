@@ -21,7 +21,6 @@
       </a>
       <ul class="nav-menu">
         <li><a href="index.html" class="active">Acasă</a></li>
-        <li><a href="flota.html">Flotă</a></li>
         <li><a href="servicii.html">Servicii</a></li>
         <li><a href="avantaje.html">Avantaje</a></li>
         <li><a href="noutati.html">Noutăți</a></li>
@@ -67,7 +66,7 @@
       
       <div class="hero-visual">
         <div class="hero-card-display">
-          <img class="hero-img" src="images/grey_sports_car.png" alt="Porsche 911 Carrera S pe fundal gri metalizat premium">
+          <img class="hero-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Fleetly premium car visual" style="opacity: 0; transition: opacity 0.4s ease;">
         </div>
       </div>
     </div>
@@ -210,13 +209,28 @@
     </div>
   </div>
 
+  <!-- MODAL: SUCCESS CONFIRMATION -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-content" style="max-width: 480px; text-align: center; padding: 3rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
+      <button class="modal-close-btn" onclick="closeSuccessModal()">&times;</button>
+      <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(16, 185, 129, 0.08); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 2.2rem; margin-bottom: 0.5rem; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <h3 style="font-family: var(--font-serif); font-size: 1.8rem; font-weight: 700; color: var(--text-primary);" id="success-modal-title">Solicitare Trimisă!</h3>
+      <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin: 0;" id="success-modal-message">
+        Mesaj de succes.
+      </p>
+      <button class="btn btn-primary" onclick="closeSuccessModal()" style="margin-top: 1rem; width: 100%;">Închide</button>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-container">
       <div class="footer-grid">
         <div class="footer-brand-column">
           <a class="brand" href="index.html">
-            <span>Fleet</span>ly
+            <i class="fa-solid fa-car-side" style="color: var(--text-primary); margin-right: 8px;"></i><span>Fleetly</span>
           </a>
           <p>Dealership auto autorizat cu accent pe mașini verificate, transparență totală și asistență de specialitate pentru cumpărători.</p>
         </div>
@@ -224,7 +238,6 @@
           <h3>Navigare</h3>
           <ul class="footer-links">
             <li><a href="index.html">Acasă</a></li>
-            <li><a href="flota.html">Flotă Auto</a></li>
             <li><a href="servicii.html">Servicii Mentenanță</a></li>
             <li><a href="avantaje.html">Avantaje</a></li>
           </ul>
@@ -250,12 +263,6 @@
       
       <div class="footer-bottom">
         <p>&copy; 2026 Fleetly Dealership. Toate drepturile rezervate. Mașini certificate premium.</p>
-        <div class="footer-socials">
-          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        </div>
       </div>
     </div>
   </footer>
@@ -265,8 +272,33 @@
   <script src="public-fallback.js"></script>
   <script src="public-cars.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      initPublicCars('fleet-container', 'car-count');
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Initialize the public cars catalog
+      await initPublicCars('fleet-container', 'car-count');
+
+      // Randomize hero image from all available cars that have images
+      const cars = window.getPublicCars() || [];
+      const heroCars = cars
+        .filter(car => car.imageUrl)
+        .map(car => ({
+          src: car.imageUrl,
+          alt: `${car.brand} ${car.model} pe fundal premium`
+        }));
+
+      if (heroCars.length > 0) {
+        const randomCar = heroCars[Math.floor(Math.random() * heroCars.length)];
+        const heroImg = document.querySelector('.hero-img');
+        if (heroImg) {
+          heroImg.onload = () => {
+            heroImg.style.opacity = '1';
+          };
+          heroImg.src = randomCar.src;
+          heroImg.alt = randomCar.alt;
+          if (heroImg.complete) {
+            heroImg.style.opacity = '1';
+          }
+        }
+      }
     });
 
     function closeCarDetails() {
@@ -320,12 +352,32 @@
       if (type === "leasing") typeLabel = "Solicită Ofertă Finanțare";
       if (type === "purchase") typeLabel = "Rezervă Vehicul";
 
-      alert(`Stimate ${clientName},\n\nSolicitarea dumneavoastră pentru "${carName}" (${typeLabel}) a fost înregistrată cu succes în sistemul Fleetly Dealership.\n\nUn consultant vă va contacta telefonic în cel mai scurt timp pentru confirmare și detalii suplimentare.`);
+      showSuccessModal(
+        "Solicitare Trimisă!",
+        `Stimate ${clientName},\n\nSolicitarea dumneavoastră pentru "${carName}" (${typeLabel}) a fost înregistrată cu succes în sistemul Fleetly Dealership.\n\nUn consultant vă va contacta în cel mai scurt timp pentru confirmare și detalii suplimentare.`
+      );
       
       // Resetare formular și închidere modal
       document.getElementById('inquiry-form').reset();
       closeCarDetails();
     }
+
+    function showSuccessModal(title, message) {
+      document.getElementById('success-modal-title').innerText = title;
+      document.getElementById('success-modal-message').innerText = message;
+      document.getElementById('success-modal').classList.add('active');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('success-modal').classList.remove('active');
+    }
+
+    // Închiderea modalului de succes la click în exterior
+    document.getElementById('success-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSuccessModal();
+      }
+    });
   </script>
 </body>
 </html>

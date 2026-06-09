@@ -46,8 +46,15 @@ html {
 body {
   background-color: var(--bg-primary);
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(30, 41, 59, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.4) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 10% 20%, rgba(58, 68, 84, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.55) 0%, transparent 60%),
+    linear-gradient(rgba(10, 12, 16, 0.88), rgba(10, 12, 16, 0.88)),
+    url('images/gearbox.png');
+  background-size: auto, auto, auto, cover, cover;
+  background-position: center, center, center, center, center;
+  background-repeat: no-repeat;
+  background-attachment: scroll, scroll, scroll, fixed, fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
@@ -254,7 +261,7 @@ header {
 .hero-title {
   font-family: var(--font-serif);
   font-size: clamp(2.5rem, 5vw, 4.2rem);
-  line-height: 1.1;
+  line-height: 1.25;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -264,6 +271,8 @@ header {
   background: var(--silver-chrome);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
 }
 
 .hero-description {
@@ -530,6 +539,7 @@ header {
   background: var(--silver-chrome);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .car-price-period {
@@ -565,6 +575,7 @@ header {
   grid-template-columns: 1fr 1.2fr;
   gap: 1rem;
   align-items: center;
+  margin-top: auto;
 }
 
 .car-financing {
@@ -577,6 +588,7 @@ header {
   color: var(--text-primary);
   display: block;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 /* --- ADVANTAGES SECTION --- */
@@ -845,6 +857,8 @@ footer {
 .footer-brand-column {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 1.5rem;
 }
 
@@ -853,11 +867,14 @@ footer {
   font-size: 0.95rem;
   line-height: 1.7;
   max-width: 320px;
+  margin: 0 auto;
 }
 
 .footer-column {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 1.5rem;
 }
 
@@ -871,6 +888,7 @@ footer {
 .footer-links {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
   list-style: none;
 }
@@ -889,6 +907,7 @@ footer {
 .footer-contact-info {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1rem;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -897,6 +916,7 @@ footer {
 .footer-contact-info span {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
 }
 
@@ -904,7 +924,8 @@ footer {
   border-top: 1px solid var(--border-light);
   padding-top: 2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   align-items: center;
   color: var(--text-muted);
   font-size: 0.85rem;

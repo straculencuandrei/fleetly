@@ -4,7 +4,7 @@
 
 ---
 
-## 🛠️ Tehnologii folosite
+##  Tehnologii folosite
 
 | Strat | Tehnologie |
 |---|---|
@@ -16,7 +16,7 @@
 
 ---
 
-## 📁 Structura proiectului
+##  Structura proiectului
 
 ```
 fleetly-main/
@@ -51,7 +51,7 @@ fleetly-main/
 
 ---
 
-## 🔌 API Endpoints (`worker.js`)
+##  API Endpoints (`worker.js`)
 
 Toate rutele sunt servite la `/api/*` de Cloudflare Worker și accesează PostgreSQL prin Hyperdrive.
 
@@ -91,7 +91,7 @@ Aceleași operații CRUD la `/api/insurances/*`, `/api/vignettes/*`, `/api/tires
 
 ---
 
-## 👤 Roluri utilizatori
+##  Roluri utilizatori
 
 | Rol | Acces |
 |---|---|
@@ -103,7 +103,7 @@ Rolul este stocat în `localStorage` după login și verificat în `app.js` la i
 
 ---
 
-## ⚡ Instalare și rulare locală
+##  Instalare și rulare locală
 
 ### Cerințe
 - [Node.js](https://nodejs.org/) v18+
@@ -136,7 +136,7 @@ npm run deploy
 
 ---
 
-## 🗄️ Inițializare bază de date
+##  Inițializare bază de date
 
 Pentru a crea schema și a popula date inițiale în PostgreSQL:
 
@@ -150,7 +150,7 @@ node scratch-init-db-all.js
 
 ---
 
-## 📋 Tabele PostgreSQL
+##  Tabele PostgreSQL
 
 | Tabel | Descriere |
 |---|---|
@@ -164,7 +164,7 @@ node scratch-init-db-all.js
 
 ---
 
-## 🌐 Pagini publice
+##  Pagini publice
 
 | Pagină | Descriere |
 |---|---|
@@ -177,7 +177,7 @@ node scratch-init-db-all.js
 
 ---
 
-## 🔒 Securitate
+##  Securitate
 
 - Sesiunea este gestionată prin `localStorage` (statusLogat, rolUtilizator)
 - Paginile protejate verifică sesiunea la inițializare și redirecționează la `login.html` dacă nu există
@@ -186,6 +186,6 @@ node scratch-init-db-all.js
 
 ---
 
-## 📄 Licență
+##  Licență
 
 Proiect realizat pentru uz educațional și demonstrativ.

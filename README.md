@@ -169,7 +169,6 @@ node scratch-init-db-all.js
 | Pagină | Descriere |
 |---|---|
 | `index.html` | Homepage cu flotă filtrabilă și formular solicitare test drive / finanțare |
-| `flota.html` | Pagina dedicată flotei de mașini |
 | `servicii.html` | Servicii oferite de dealership |
 | `avantaje.html` | Avantajele colaborării cu Fleetly |
 | `noutati.html` | Noutăți și articole |
